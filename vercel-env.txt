@@ -1,0 +1,30 @@
+# ════════════════════════════════════════════════════════
+#  PEGAZUS — Variables Vercel
+#  Settings → Environment Variables → ajouter une par une
+#  Cocher : Production + Preview + Development
+# ════════════════════════════════════════════════════════
+
+NEXT_PUBLIC_SUPABASE_URL
+https://zpckolkepdckmnaocnab.supabase.co
+
+NEXT_PUBLIC_SUPABASE_ANON_KEY
+eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpwY2tvbGtlcGRja21uYW9jbmFiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk0ODI3MzksImV4cCI6MjA5NTA1ODczOX0.1dtTf-P8O7xswRQRLkBCLJJizAQ9hRb0zrPP3XiOW50
+
+SUPABASE_SERVICE_ROLE_KEY
+eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpwY2tvbGtlcGRja21uYW9jbmFiIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc3OTQ4MjczOSwiZXhwIjoyMDk1MDU4NzM5fQ.nQ0bN3unHDlbZ05WaCqSKoAOjINTcKxXpK1Gh3Q1xwA
+
+VERTEX_MENTOR_URL
+https://vertex-mentor.com
+
+VERTEX_MENTOR_API_KEY
+pegazus_api_k3y_vtx_2024
+
+VERTEX_MENTOR_SECRET
+pegazus_hmac_s3cr3t_vtx_2024
+
+NEXT_PUBLIC_APP_NAME
+Pegazus
+
+NEXT_PUBLIC_APP_URL
+https://pegazus.vercel.app
+(⚠ mettre à jour avec votre vraie URL Vercel)
