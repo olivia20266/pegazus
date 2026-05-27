@@ -1,4 +1,3 @@
-// Server Component — auth check
 import { redirect } from 'next/navigation'
 import { getServerSession } from '@/lib/supabase-server'
 import { supabaseAdmin } from '@/lib/supabase'
@@ -9,10 +8,7 @@ export default async function TradingPage() {
   if (!session) redirect('/login')
 
   const { data: profile } = await supabaseAdmin
-    .from('profiles')
-    .select('*, wallets(*)')
-    .eq('id', session.user.id)
-    .single()
+    .from('profiles').select('*, wallets(*)').eq('id', session.user.id).single()
 
   if (!profile) redirect('/login')
 
