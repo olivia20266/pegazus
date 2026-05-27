@@ -19,9 +19,9 @@ export async function middleware(req: NextRequest) {
 
   const { data: { session } } = await supabase.auth.getSession()
 
-  const isPublic  = ['/login', '/register'].some(r => pathname.startsWith(r))
-  const isAdmin   = pathname.startsWith('/admin')
-  const isApi     = pathname.startsWith('/api')
+  const isPublic = ['/login', '/register'].some(r => pathname.startsWith(r))
+  const isAdmin  = pathname.startsWith('/admin')
+  const isApi    = pathname.startsWith('/api')
 
   if (isApi) return res
 
@@ -42,5 +42,5 @@ export async function middleware(req: NextRequest) {
 }
 
 export const config = {
-  matcher: ['/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)'],
+  matcher: ['/((?!_next/static|_next/image|favicon.ico|logo.png|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)'],
 }
