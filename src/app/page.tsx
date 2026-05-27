@@ -1,8 +1,8 @@
 import { redirect } from 'next/navigation'
-import { getSession } from '@/lib/auth'
+import { getServerSession } from '@/lib/supabase-server'
 
 export default async function Home() {
-  const session = await getSession()
+  const session = await getServerSession()
   if (session) redirect('/wallet')
   redirect('/login')
 }
