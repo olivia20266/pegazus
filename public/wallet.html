@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ScalpBot HF — Mon Wallet</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root{--gold:#c9a84c;--gold2:#e8c96a;--dark:#07090f;--dark2:#0d1117;--dark3:#131923;--dark4:#1a2234;--border:rgba(201,168,76,.14);--border2:rgba(255,255,255,.06);--text:#e8e4d9;--muted:#6b7280;--muted2:#94a3b8;--red:#ef4444;--green:#22c55e;--blue:#3b82f6;--amber:#f59e0b}
+*{margin:0;padding:0;box-sizing:border-box}
+body{min-height:100vh;background:var(--dark);color:var(--text);font-family:'DM Sans',sans-serif}
+nav{display:flex;align-items:center;justify-content:space-between;padding:14px 28px;border-bottom:1px solid var(--border);background:rgba(7,9,15,.9);backdrop-filter:blur(12px);position:sticky;top:0;z-index:100}
+.nav-brand{display:flex;align-items:center;gap:10px}
+.nav-icon{width:34px;height:34px;border:1px solid var(--gold);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:16px;background:rgba(201,168,76,.08)}
+.nav-name{font-family:'Syne',sans-serif;font-size:16px;font-weight:700;color:var(--gold)}
+.nav-right{display:flex;align-items:center;gap:10px}
+.avatar{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--gold),var(--gold2));display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:#07090f}
+.badge{display:inline-flex;align-items:center;gap:5px;padding:3px 10px;border-radius:20px;font-size:10px;font-weight:700;letter-spacing:.05em}
+.badge.green{background:rgba(34,197,94,.1);color:var(--green)}.badge.amber{background:rgba(245,158,11,.1);color:var(--amber)}.badge.red{background:rgba(239,68,68,.1);color:var(--red)}.badge.blue{background:rgba(59,130,246,.1);color:var(--blue)}
+.logout-btn{background:none;border:1px solid var(--border2);border-radius:8px;color:var(--muted2);font-size:12px;padding:6px 12px;cursor:pointer;font-family:'DM Sans',sans-serif;transition:color .2s}
+.logout-btn:hover{color:var(--red)}
+main{max-width:1200px;margin:0 auto;padding:28px 20px}
+.hero{background:var(--dark2);border:1px solid var(--border);border-radius:18px;padding:32px 36px;display:grid;grid-template-columns:1fr auto;gap:20px;align-items:center;margin-bottom:20px;position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;top:-60px;right:-60px;width:260px;height:260px;background:radial-gradient(circle,rgba(201,168,76,.06) 0%,transparent 70%);border-radius:50%}
+.hero-label{font-size:11px;font-weight:500;color:var(--muted);letter-spacing:.1em;text-transform:uppercase;margin-bottom:8px}
+.hero-amount{font-family:'DM Mono',monospace;font-size:48px;font-weight:500;color:#fff;line-height:1;margin-bottom:8px}
+.hero-amount .cur{font-size:22px;color:var(--muted);margin-right:4px}
+.hero-change{font-size:14px}
+.hero-meta{display:flex;gap:20px;margin-top:16px}
+.hmeta{font-size:12px;color:var(--muted)}.hmeta strong{display:block;font-size:14px;color:var(--text);font-weight:500;margin-bottom:2px}
+.hero-actions{display:flex;flex-direction:column;gap:10px}
+.action-btn{padding:12px 24px;border-radius:10px;font-size:14px;font-weight:600;font-family:'Syne',sans-serif;cursor:pointer;transition:all .2s;border:none;white-space:nowrap;display:flex;align-items:center;gap:8px}
+.action-btn.deposit{background:linear-gradient(135deg,var(--gold),var(--gold2));color:#07090f}.action-btn.deposit:hover{opacity:.9}
+.action-btn.withdraw{background:transparent;border:1px solid var(--border);color:var(--text)}.action-btn.withdraw:hover{background:rgba(255,255,255,.04)}
+.action-btn.trade{background:rgba(34,197,94,.12);border:1px solid rgba(34,197,94,.3);color:var(--green)}.action-btn.trade:hover{background:rgba(34,197,94,.18)}
+.learn-box{background:linear-gradient(135deg,rgba(201,168,76,.08),rgba(201,168,76,.03));border:1px solid var(--border);border-radius:14px;padding:16px 20px;display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:20px}
+.ll-btn{padding:9px 18px;border-radius:9px;background:rgba(201,168,76,.15);border:1px solid var(--border);color:var(--gold);font-size:13px;font-weight:600;cursor:pointer;white-space:nowrap;transition:background .2s;font-family:'DM Sans',sans-serif}.ll-btn:hover{background:rgba(201,168,76,.25)}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:20px}
+.card{background:var(--dark2);border:1px solid var(--border2);border-radius:13px;padding:18px 20px}
+.card-label{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px}
+.card-val{font-family:'DM Mono',monospace;font-size:20px;font-weight:500}.card-val.green{color:var(--green)}.card-val.red{color:var(--red)}.card-val.gold{color:var(--gold)}
+.card-sub{font-size:11px;color:var(--muted);margin-top:4px}
+.grid2{display:grid;grid-template-columns:1.6fr 1fr;gap:16px;margin-bottom:20px}
+.section-title{font-family:'Syne',sans-serif;font-size:15px;font-weight:700;margin-bottom:12px;display:flex;align-items:center;gap:8px}
+.tx-list{background:var(--dark2);border:1px solid var(--border2);border-radius:13px;overflow:hidden}
+.tx-item{display:flex;align-items:center;padding:14px 18px;border-bottom:1px solid var(--border2);transition:background .15s}
+.tx-item:last-child{border-bottom:none}.tx-item:hover{background:rgba(255,255,255,.02)}
+.tx-ico{width:36px;height:36px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;margin-right:12px}
+.tx-ico.dep{background:rgba(34,197,94,.1)}.tx-ico.wit{background:rgba(239,68,68,.1)}.tx-ico.adj{background:rgba(245,158,11,.1)}.tx-ico.trade{background:rgba(59,130,246,.1)}
+.tx-info{flex:1}.tx-name{font-size:13px;font-weight:500}.tx-meta{font-size:11px;color:var(--muted);margin-top:2px}
+.tx-amount{font-family:'DM Mono',monospace;font-size:14px;font-weight:500;text-align:right}
+.tx-amount.pos{color:var(--green)}.tx-amount.neg{color:var(--red)}
+.tx-date{font-size:10px;color:var(--muted);text-align:right;margin-top:2px}
+.empty-state{padding:32px;text-align:center;color:var(--muted);font-size:13px}
+/* Modal */
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,.75);backdrop-filter:blur(6px);z-index:200;display:none;align-items:center;justify-content:center}
+.overlay.open{display:flex}
+.modal{background:var(--dark2);border:1px solid var(--border);border-radius:18px;width:100%;max-width:440px;max-height:90vh;display:flex;flex-direction:column;animation:mIn .25s ease;overflow:hidden}
+@keyframes mIn{from{opacity:0;transform:scale(.96)}to{opacity:1;transform:none}}
+.modal-hdr{padding:22px 26px 18px;border-bottom:1px solid var(--border);display:flex;align-items:flex-start;justify-content:space-between;flex-shrink:0}
+.modal-hdr h3{font-family:'Syne',sans-serif;font-size:18px;font-weight:700}.modal-hdr p{font-size:13px;color:var(--muted);margin-top:3px}
+.modal-close{background:var(--dark3);border:1px solid var(--border2);width:30px;height:30px;border-radius:7px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--muted);font-size:15px;transition:color .15s;flex-shrink:0}.modal-close:hover{color:var(--text)}
+.modal-body{padding:22px 26px;overflow-y:auto}
+.modal-footer{padding:16px 26px;border-top:1px solid var(--border);display:flex;gap:10px;flex-shrink:0}
+.field{display:flex;flex-direction:column;gap:5px;margin-bottom:14px}
+.field label{font-size:11px;font-weight:500;color:#9ca3af;letter-spacing:.06em;text-transform:uppercase}
+.field input,.field select{background:var(--dark3);border:1px solid #2d3748;border-radius:9px;padding:11px 14px;color:var(--text);font-size:13px;font-family:'DM Sans',sans-serif;outline:none;transition:border-color .2s;width:100%}
+.field input:focus,.field select:focus{border-color:var(--gold)}
+.field input::placeholder{color:#4b5563}.field select option{background:var(--dark3)}
+.src-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px}
+.src-card{border:2px solid var(--border2);border-radius:10px;padding:14px;cursor:pointer;transition:all .2s;text-align:center}
+.src-card:hover,.src-card.sel{border-color:var(--gold);background:rgba(201,168,76,.06)}
+.src-card .s-ico{font-size:24px;margin-bottom:6px}.src-card .s-name{font-size:13px;font-weight:600}.src-card .s-bal{font-size:11px;color:var(--muted);margin-top:2px}
+.presets{display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap}
+.preset{padding:6px 12px;border:1px solid var(--border2);border-radius:7px;font-size:12px;font-weight:600;color:var(--muted2);cursor:pointer;background:none;font-family:'DM Sans',sans-serif;transition:all .15s}.preset:hover{border-color:var(--gold);color:var(--gold)}
+.modal-info{background:rgba(201,168,76,.06);border:1px solid var(--border);border-radius:9px;padding:12px;font-size:12px;color:var(--muted);line-height:1.6;margin-bottom:14px}
+.modal-info strong{color:var(--gold);display:block;margin-bottom:3px}
+.btn-gold{flex:1;padding:12px;border:none;border-radius:9px;background:linear-gradient(135deg,var(--gold),var(--gold2));color:#07090f;font-weight:700;font-size:14px;font-family:'Syne',sans-serif;cursor:pointer;transition:opacity .2s;display:flex;align-items:center;justify-content:center;gap:8px}
+.btn-gold:hover{opacity:.9}.btn-gold:disabled{opacity:.5;cursor:not-allowed}
+.btn-ghost{padding:12px 18px;background:var(--dark3);border:1px solid var(--border2);border-radius:9px;color:var(--muted2);font-size:14px;cursor:pointer;font-family:'DM Sans',sans-serif;transition:color .15s}.btn-ghost:hover{color:var(--text)}
+.spinner{width:14px;height:14px;border:2px solid rgba(7,9,15,.4);border-top-color:#07090f;border-radius:50%;animation:spin .7s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.alert{border-radius:8px;padding:10px 14px;font-size:13px;margin-bottom:12px;display:none}
+.alert.error{background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.3);color:var(--red)}
+.alert.success{background:rgba(34,197,94,.08);border:1px solid rgba(34,197,94,.3);color:var(--green)}
+.success-anim{text-align:center;padding:20px}
+.robot-card{background:var(--dark3);border-radius:10px;padding:14px;margin-top:12px}
+.robot-row{display:flex;justify-content:space-between;align-items:center;font-size:12px;padding:5px 0;border-bottom:1px solid var(--border2)}.robot-row:last-child{border-bottom:none}
+.robot-label{color:var(--muted)}.robot-val{font-family:'DM Mono',monospace;font-size:12px}
+@media(max-width:900px){.hero{grid-template-columns:1fr}.hero-actions{flex-direction:row;flex-wrap:wrap}.grid2{grid-template-columns:1fr}.grid3{grid-template-columns:1fr 1fr}}
+@media(max-width:580px){.grid3{grid-template-columns:1fr}.hero-amount{font-size:34px}}
+</style>
+</head>
+<body>
+<nav>
+  <div class="nav-brand"><div class="nav-icon">⚡</div><span class="nav-name">ScalpBot HF</span></div>
+  <div class="nav-right">
+    <span class="badge amber" id="kycBadge">⏳ KYC en attente</span>
+    <div class="avatar" id="userAvatar">??</div>
+    <button class="logout-btn" onclick="logout()">Déconnexion</button>
+  </div>
+</nav>
+
+<main>
+  <!-- Banque formation -->
+  <div class="learn-box">
+    <div>
+      <h3 style="font-size:14px;font-weight:600;margin-bottom:4px">🎓 Solde disponible sur votre espace formation</h3>
+      <p style="font-size:13px;color:var(--muted)">Transférez vers votre wallet de trading instantanément</p>
+    </div>
+    <div style="display:flex;align-items:center;gap:16px">
+      <div style="font-family:'DM Mono',monospace;font-size:18px;color:var(--gold);font-weight:500" id="learningBal">$—</div>
+      <button class="ll-btn" onclick="openDeposit()">Déposer →</button>
+    </div>
+  </div>
+
+  <!-- Wallet Hero -->
+  <div class="hero">
+    <div>
+      <div class="hero-label">Solde total du wallet</div>
+      <div class="hero-amount"><span class="cur">$</span><span id="walletBal">—</span></div>
+      <div class="hero-change" id="floatPL"></div>
+      <div class="hero-meta">
+        <div class="hmeta"><strong id="freeMrg">—</strong>Disponible</div>
+        <div class="hmeta"><strong id="margin">—</strong>En marge</div>
+        <div class="hmeta"><strong id="mt5Login" style="color:var(--gold)">—</strong>MT5 Login</div>
+      </div>
+    </div>
+    <div class="hero-actions">
+      <button class="action-btn deposit" onclick="openDeposit()">⬇ Déposer</button>
+      <button class="action-btn withdraw" onclick="openWithdraw()">⬆ Retirer</button>
+      <button class="action-btn trade" onclick="alert('Ouvrir MetaTrader 5 avec votre login')">📈 Trader</button>
+    </div>
+  </div>
+
+  <!-- Stats -->
+  <div class="grid3">
+    <div class="card"><div class="card-label">Total déposé</div><div class="card-val gold" id="totalDep">$0</div><div class="card-sub" id="depCount">0 dépôts</div></div>
+    <div class="card"><div class="card-label">Total retiré</div><div class="card-val" id="totalWd">$0</div><div class="card-sub" id="wdCount">0 retraits</div></div>
+    <div class="card"><div class="card-label">P&L ajustements</div><div class="card-val green" id="totalAdj">$0</div><div class="card-sub" id="adjCount">0 opérations</div></div>
+  </div>
+
+  <!-- Transactions + Robot -->
+  <div class="grid2">
+    <div>
+      <div class="section-title">📋 Historique des transactions</div>
+      <div class="tx-list" id="txList"><div class="empty-state">Chargement...</div></div>
+    </div>
+    <div>
+      <div class="section-title">🤖 Robot actif</div>
+      <div class="card" id="robotCard">
+        <div style="text-align:center;color:var(--muted);font-size:13px;padding:16px">Chargement...</div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<!-- MODAL DEPOT -->
+<div class="overlay" id="depositOverlay">
+<div class="modal">
+  <div class="modal-hdr">
+    <div><h3>⬇ Déposer des fonds</h3><p>Source du dépôt</p></div>
+    <button class="modal-close" onclick="closeModal('depositOverlay')">✕</button>
+  </div>
+  <div class="modal-body">
+    <div class="src-grid">
+      <div class="src-card sel" id="src-learning" onclick="selectSrc('learning')">
+        <div class="s-ico">🎓</div><div class="s-name">Site formation</div>
+        <div class="s-bal" id="srcLBal">Solde : $—</div>
+      </div>
+      <div class="src-card" id="src-bank" onclick="selectSrc('bank')">
+        <div class="s-ico">🏦</div><div class="s-name">Virement bancaire</div>
+        <div class="s-bal">1–3 jours ouvrés</div>
+      </div>
+    </div>
+    <div class="alert error" id="depAlert"></div>
+    <div class="field"><label>Montant (USD)</label><input type="number" id="depAmt" placeholder="Ex : 200" min="50" oninput="updateDepDisplay()"></div>
+    <div class="presets">
+      <button class="preset" onclick="setAmt('depAmt',100)">$100</button>
+      <button class="preset" onclick="setAmt('depAmt',250)">$250</button>
+      <button class="preset" onclick="setAmt('depAmt',500)">$500</button>
+      <button class="preset" id="depMax" onclick="setMax()">Max</button>
+    </div>
+    <div class="modal-info" id="depInfo"><strong>🔗 Transfert depuis votre espace formation</strong>Crédité instantanément sur votre wallet de trading. Minimum : 50 USD.</div>
+  </div>
+  <div class="modal-footer">
+    <button class="btn-ghost" onclick="closeModal('depositOverlay')">Annuler</button>
+    <button class="btn-gold" id="depBtn" onclick="confirmDeposit()"><span id="depTxt">Confirmer le dépôt</span></button>
+  </div>
+</div>
+</div>
+
+<!-- MODAL RETRAIT -->
+<div class="overlay" id="withdrawOverlay">
+<div class="modal">
+  <div class="modal-hdr">
+    <div><h3>⬆ Retirer des fonds</h3><p>Vers votre formation ou compte bancaire</p></div>
+    <button class="modal-close" onclick="closeModal('withdrawOverlay')">✕</button>
+  </div>
+  <div class="modal-body">
+    <div class="src-grid">
+      <div class="src-card sel" id="wd-formation" onclick="selectWdDest('learning_platform')">
+        <div class="s-ico">🎓</div><div class="s-name">Site formation</div><div class="s-bal">Instantané</div>
+      </div>
+      <div class="src-card" id="wd-bank" onclick="selectWdDest('bank_wire')">
+        <div class="s-ico">🏦</div><div class="s-name">Compte bancaire</div><div class="s-bal">1–3 jours ouvrés</div>
+      </div>
+    </div>
+    <div class="alert error" id="wdAlert"></div>
+    <div class="field"><label>Montant (USD)</label><input type="number" id="wdAmt" placeholder="Ex : 100" min="20"></div>
+    <div class="presets">
+      <button class="preset" onclick="setAmt('wdAmt',100)">$100</button>
+      <button class="preset" onclick="setAmt('wdAmt',250)">$250</button>
+      <button class="preset" onclick="setAmt('wdAmt',500)">$500</button>
+      <button class="preset" id="wdMax">Max</button>
+    </div>
+    <div id="bankFields" style="display:none">
+      <div class="field"><label>IBAN / Numéro de compte</label><input type="text" id="wdIban" placeholder="FR76 XXXX..."></div>
+    </div>
+    <div class="modal-info"><strong>⚠ Conditions</strong>Solde disponible : <strong id="wdAvail" style="color:var(--gold)">$—</strong> • Min : $20 • Aucun frais</div>
+    <div class="field"><label>Code SMS de confirmation</label><input type="text" id="wdCode" placeholder="000000" maxlength="6" style="letter-spacing:.2em;font-size:18px;text-align:center"></div>
+    <div style="font-size:12px;color:var(--muted);text-align:center;margin-top:-8px">
+      <button onclick="sendWdOtp()" style="background:none;border:none;color:var(--gold);font-size:12px;cursor:pointer;font-family:'DM Sans',sans-serif">Envoyer le code SMS →</button>
+    </div>
+    <div class="alert success" id="otpSent" style="margin-top:10px"></div>
+  </div>
+  <div class="modal-footer">
+    <button class="btn-ghost" onclick="closeModal('withdrawOverlay')">Annuler</button>
+    <button class="btn-gold" id="wdBtn" onclick="confirmWithdraw()"><span id="wdTxt">Confirmer le retrait</span></button>
+  </div>
+</div>
+</div>
+
+<script>
+let walletData = null;
+let selectedSrc = 'learning';
+let selectedWdDest = 'learning_platform';
+
+// ── INIT ──────────────────────────────────────────────────────
+async function loadData(){
+  try{
+    const r = await fetch('/api/wallet');
+    if(r.status===401){location.href='/login';return}
+    const data = await r.json();
+    walletData = data;
+    renderWallet(data);
+    renderTx(data.transactions);
+    renderRobot(data.robot);
+  }catch(e){console.error(e)}
+}
+
+function fmtUSD(n){ return n!==undefined&&n!==null ? '$'+parseFloat(n).toLocaleString('fr-FR',{minimumFractionDigits:2,maximumFractionDigits:2}).replace(',','.') : '$—' }
+function fmtDate(iso){ if(!iso)return'—'; const d=new Date(iso); return d.toLocaleDateString('fr-FR',{day:'2-digit',month:'short',year:'numeric'})+' '+d.toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'}); }
+
+function renderWallet(data){
+  const {wallet, user} = data;
+  // Nav
+  document.getElementById('userAvatar').textContent = (user.firstName[0]+user.lastName[0]).toUpperCase();
+  const kb = document.getElementById('kycBadge');
+  if(user.kyc==='verified'){kb.textContent='✓ KYC Vérifié';kb.className='badge green'}
+  else if(user.kyc==='pending'){kb.textContent='⏳ KYC En attente';kb.className='badge amber'}
+  else{kb.textContent='✗ KYC Rejeté';kb.className='badge red'}
+
+  // Hero
+  document.getElementById('walletBal').textContent = wallet.balance.toLocaleString('fr-FR',{minimumFractionDigits:2});
+  document.getElementById('learningBal').textContent = fmtUSD(wallet.learningBalance);
+  document.getElementById('srcLBal').textContent = 'Solde : '+fmtUSD(wallet.learningBalance);
+  document.getElementById('freeMrg').textContent  = fmtUSD(wallet.freeMargin);
+  document.getElementById('margin').textContent   = fmtUSD(wallet.margin);
+  document.getElementById('mt5Login').textContent = wallet.mt5Login;
+  document.getElementById('wdAvail').textContent  = fmtUSD(wallet.freeMargin);
+
+  const fl = wallet.floatingPL;
+  const flEl = document.getElementById('floatPL');
+  flEl.textContent = (fl>=0?'▲ +':' ▼ ')+fmtUSD(Math.abs(fl))+' P&L flottant';
+  flEl.style.color = fl>=0?'var(--green)':'var(--red)';
+
+  // Stats
+  const txs = data.transactions||[];
+  const deps = txs.filter(t=>t.type==='deposit'&&t.amount>0);
+  const wds  = txs.filter(t=>t.type==='withdrawal');
+  const adjs = txs.filter(t=>t.type==='adjustment');
+  document.getElementById('totalDep').textContent  = fmtUSD(deps.reduce((s,t)=>s+Math.abs(t.amount),0));
+  document.getElementById('depCount').textContent  = deps.length+' dépôts';
+  document.getElementById('totalWd').textContent   = fmtUSD(wds.reduce((s,t)=>s+Math.abs(t.amount),0));
+  document.getElementById('wdCount').textContent   = wds.length+' retraits';
+  const adjTotal = adjs.reduce((s,t)=>s+t.amount,0);
+  const adjEl = document.getElementById('totalAdj');
+  adjEl.textContent = (adjTotal>=0?'+':'')+fmtUSD(adjTotal);
+  adjEl.className='card-val '+(adjTotal>=0?'green':'red');
+  document.getElementById('adjCount').textContent = adjs.length+' opérations';
+}
+
+function txIcon(type){
+  if(type==='deposit')return{cls:'dep',ico:'⬇'};
+  if(type==='withdrawal')return{cls:'wit',ico:'⬆'};
+  if(type==='adjustment')return{cls:'adj',ico:'⚡'};
+  return{cls:'trade',ico:'📈'};
+}
+
+function renderTx(txs){
+  const el = document.getElementById('txList');
+  if(!txs||!txs.length){el.innerHTML='<div class="empty-state">Aucune transaction</div>';return}
+  el.innerHTML = txs.map(t=>{
+    const {cls,ico}=txIcon(t.type);
+    const pos=t.amount>=0;
+    return `<div class="tx-item">
+      <div class="tx-ico ${cls}">${ico}</div>
+      <div class="tx-info">
+        <div class="tx-name">${t.description||t.type}</div>
+        <div class="tx-meta">${t.source||''}</div>
+      </div>
+      <div>
+        <div class="tx-amount ${pos?'pos':'neg'}">${pos?'+':''}${fmtUSD(Math.abs(t.amount))}</div>
+        <div class="tx-date">${fmtDate(t.createdAt)}</div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function renderRobot(robot){
+  const el=document.getElementById('robotCard');
+  if(!robot){
+    el.innerHTML=`<div style="text-align:center;padding:16px"><div style="font-size:28px;margin-bottom:8px">🤖</div><p style="color:var(--muted);font-size:13px">Aucun robot configuré</p><p style="color:var(--muted);font-size:11px;margin-top:4px">Téléchargez ScalpBot_HF.mq5 et attachez-le à votre graphique MT5</p></div>`;
+    return;
+  }
+  const active=robot.status==='active';
+  el.innerHTML=`
+    <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
+      <div style="width:8px;height:8px;border-radius:50%;background:${active?'var(--green)':'var(--muted)'};${active?'box-shadow:0 0 6px var(--green)':''}"></div>
+      <span style="font-size:13px;font-weight:600;color:${active?'var(--green)':'var(--muted)'}">${active?'En cours':'Arrêté'} — ${robot.symbol} ${robot.timeframe}</span>
+    </div>
+    <div class="robot-card">
+      <div class="robot-row"><span class="robot-label">Positions</span><span class="robot-val">${robot.positions} ouvertes</span></div>
+      <div class="robot-row"><span class="robot-label">P&L session</span><span class="robot-val" style="color:${robot.sessionPL>=0?'var(--green)':'var(--red)'}">${robot.sessionPL>=0?'+':''}${fmtUSD(robot.sessionPL)}</span></div>
+      <div class="robot-row"><span class="robot-label">Drawdown</span><span class="robot-val" style="color:${robot.drawdown>3?'var(--red)':robot.drawdown>2?'var(--amber)':'var(--green)'}">${robot.drawdown}%</span></div>
+    </div>`;
+}
+
+// ── MODALES ───────────────────────────────────────────────────
+function openDeposit(){ document.getElementById('depAmt').value=''; updateDepDisplay(); document.getElementById('depAlert').style.display='none'; openModal('depositOverlay'); }
+function openWithdraw(){ document.getElementById('wdAmt').value=''; document.getElementById('wdCode').value=''; document.getElementById('wdAlert').style.display='none'; document.getElementById('otpSent').style.display='none'; if(walletData) document.getElementById('wdMax').onclick=()=>setAmt('wdAmt',walletData.wallet.freeMargin); openModal('withdrawOverlay'); }
+function openModal(id){ document.getElementById(id).classList.add('open'); }
+function closeModal(id){ document.getElementById(id).classList.remove('open'); }
+
+function selectSrc(s){
+  selectedSrc=s;
+  document.querySelectorAll('#depositOverlay .src-card').forEach(c=>c.classList.remove('sel'));
+  document.getElementById('src-'+s).classList.add('sel');
+  const info=document.getElementById('depInfo');
+  if(s==='learning') info.innerHTML='<strong>🔗 Transfert depuis votre espace formation</strong>Crédité instantanément. Minimum : 50 USD.';
+  else info.innerHTML='<strong>🏦 Virement bancaire</strong>IBAN : FR76 3000 4028 3700 0100 0789 234<br>BIC : BNPAFRPP<br>Référence : votre email';
+}
+function selectWdDest(d){
+  selectedWdDest=d;
+  document.querySelectorAll('#withdrawOverlay .src-card').forEach(c=>c.classList.remove('sel'));
+  document.getElementById(d==='learning_platform'?'wd-formation':'wd-bank').classList.add('sel');
+  document.getElementById('bankFields').style.display=d==='bank_wire'?'block':'none';
+}
+
+function setAmt(id,v){ document.getElementById(id).value=v; if(id==='depAmt')updateDepDisplay(); }
+function setMax(){ if(walletData) setAmt('depAmt',Math.min(walletData.wallet.learningBalance,9999)); }
+function updateDepDisplay(){}
+
+async function confirmDeposit(){
+  if(selectedSrc!=='learning'){alert('Le virement bancaire nécessite un traitement manuel. Contactez le support.');return}
+  const amt=parseFloat(document.getElementById('depAmt').value);
+  if(!amt||amt<50){showModalAlert('depAlert','Montant minimum : 50 USD');return}
+  setBtnLoading('depBtn','depTxt',true,'Dépôt en cours...');
+  try{
+    const r=await fetch('/api/wallet/deposit/learning',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({amount:amt})});
+    const data=await r.json();
+    if(!r.ok){showModalAlert('depAlert',data.error);return}
+    closeModal('depositOverlay');
+    await loadData();
+    showToast('✓ '+fmtUSD(amt)+' crédités sur votre wallet !','green');
+  }catch(e){showModalAlert('depAlert','Erreur réseau')}
+  finally{setBtnLoading('depBtn','depTxt',false,'Confirmer le dépôt')}
+}
+
+async function sendWdOtp(){
+  try{
+    const r=await fetch('/api/wallet/otp',{method:'POST'});
+    const d=await r.json();
+    const el=document.getElementById('otpSent');
+    el.style.display='block';
+    el.textContent='✓ Code envoyé'+(d.devOtp?' — Code dev : '+d.devOtp:'');
+  }catch(e){showModalAlert('wdAlert','Erreur envoi SMS')}
+}
+
+async function confirmWithdraw(){
+  const amt=parseFloat(document.getElementById('wdAmt').value);
+  const code=document.getElementById('wdCode').value.trim();
+  if(!amt||amt<20){showModalAlert('wdAlert','Montant minimum : 20 USD');return}
+  if(!code){showModalAlert('wdAlert','Entrez le code SMS de confirmation');return}
+  setBtnLoading('wdBtn','wdTxt',true,'Traitement...');
+  try{
+    const body={amount:amt,destination:selectedWdDest,otpCode:code};
+    if(selectedWdDest==='bank_wire') body.iban=document.getElementById('wdIban').value;
+    const r=await fetch('/api/wallet/withdraw',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
+    const data=await r.json();
+    if(!r.ok){showModalAlert('wdAlert',data.error);return}
+    closeModal('withdrawOverlay');
+    await loadData();
+    showToast('⬆ Retrait de '+fmtUSD(amt)+' initié','amber');
+  }catch(e){showModalAlert('wdAlert','Erreur réseau')}
+  finally{setBtnLoading('wdBtn','wdTxt',false,'Confirmer le retrait')}
+}
+
+function showModalAlert(id,msg){const el=document.getElementById(id);el.textContent=msg;el.style.display='block';setTimeout(()=>el.style.display='none',5000)}
+function setBtnLoading(btnId,txtId,loading,txt){const b=document.getElementById(btnId);const t=document.getElementById(txtId);b.disabled=loading;t.innerHTML=loading?`<div class="spinner"></div> ${txt}`:txt}
+
+// Toast
+function showToast(msg,color='green'){
+  const t=document.createElement('div');
+  t.style.cssText=`position:fixed;bottom:24px;right:24px;z-index:999;background:var(--dark2);border:1px solid ${color==='green'?'rgba(34,197,94,.3)':'rgba(245,158,11,.3)'};border-radius:12px;padding:14px 18px;font-size:13px;font-weight:500;color:${color==='green'?'var(--green)':'var(--amber)'};box-shadow:0 8px 32px rgba(0,0,0,.4);animation:mIn .3s ease;min-width:260px`;
+  t.textContent=msg; document.body.appendChild(t);
+  setTimeout(()=>{t.style.opacity='0';t.style.transition='.3s';setTimeout(()=>t.remove(),300)},3500);
+}
+
+async function logout(){await fetch('/api/auth/logout',{method:'POST'});location.href='/login'}
+
+// Close on overlay click
+document.querySelectorAll('.overlay').forEach(o=>o.addEventListener('click',e=>{if(e.target===o)o.classList.remove('open')}));
+
+// Rafraîchir toutes les 8s
+loadData();
+setInterval(loadData, 8000);
+</script>
+</body>
+</html>
