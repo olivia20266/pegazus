@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ScalpBot HF — Inscription</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root{--gold:#c9a84c;--gold2:#e8c96a;--dark:#07090f;--dark2:#0d1117;--dark3:#131923;--border:rgba(201,168,76,.18);--text:#e8e4d9;--muted:#6b7280;--red:#ef4444;--green:#22c55e}
+*{margin:0;padding:0;box-sizing:border-box}
+body{min-height:100vh;background:var(--dark);color:var(--text);font-family:'DM Sans',sans-serif;display:flex;overflow-x:hidden}
+.bg-grid{position:fixed;inset:0;background-image:linear-gradient(rgba(201,168,76,.04) 1px,transparent 1px),linear-gradient(90deg,rgba(201,168,76,.04) 1px,transparent 1px);background-size:60px 60px;z-index:0}
+.left{width:40%;min-height:100vh;position:relative;display:flex;flex-direction:column;justify-content:center;padding:60px 56px;z-index:1;border-right:1px solid var(--border)}
+.right{flex:1;display:flex;flex-direction:column;justify-content:center;padding:60px 56px;z-index:1;overflow-y:auto}
+.brand{display:flex;align-items:center;gap:12px;margin-bottom:48px}
+.brand-icon{width:44px;height:44px;border:1px solid var(--gold);border-radius:11px;display:flex;align-items:center;justify-content:center;font-size:20px;background:rgba(201,168,76,.08)}
+.brand-name{font-family:'Syne',sans-serif;font-size:18px;font-weight:700;color:var(--gold)}
+h1{font-family:'Syne',sans-serif;font-size:40px;font-weight:800;line-height:1.1;color:#fff;margin-bottom:16px}
+h1 em{color:var(--gold);font-style:normal}
+.hero-sub{color:var(--muted);font-size:15px;line-height:1.7;max-width:340px;margin-bottom:40px}
+.feature{display:flex;align-items:flex-start;gap:12px;padding:14px 18px;background:rgba(201,168,76,.04);border:1px solid var(--border);border-radius:12px;margin-bottom:12px}
+.feature-ico{font-size:18px;flex-shrink:0;margin-top:2px}
+.feature-text h3{font-size:13px;font-weight:500;color:var(--text);margin-bottom:2px}
+.feature-text p{font-size:12px;color:var(--muted)}
+.form-header{margin-bottom:28px}
+.form-header h2{font-family:'Syne',sans-serif;font-size:26px;font-weight:700;color:#fff;margin-bottom:5px}
+.form-header p{color:var(--muted);font-size:14px}.form-header a{color:var(--gold);text-decoration:none}
+/* Steps */
+.steps{display:flex;align-items:center;gap:0;margin-bottom:32px}
+.step{flex:0;display:flex;align-items:center;gap:8px;font-size:11px;font-weight:500;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.step-num{width:26px;height:26px;border-radius:50%;border:1px solid #2d3748;display:flex;align-items:center;justify-content:center;font-size:11px;background:var(--dark3);flex-shrink:0;transition:all .3s}
+.step.active .step-num{border-color:var(--gold);background:rgba(201,168,76,.15);color:var(--gold)}.step.active{color:var(--gold)}
+.step.done .step-num{border-color:var(--green);background:rgba(34,197,94,.15);color:var(--green)}.step.done{color:var(--green)}
+.step-line{flex:1;height:1px;background:#2d3748;margin:0 8px;min-width:20px}.step-line.done{background:var(--gold)}
+/* Form */
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.field{display:flex;flex-direction:column;gap:6px;margin-bottom:14px}
+.field label{font-size:11px;font-weight:500;color:#9ca3af;letter-spacing:.04em;text-transform:uppercase}
+.field input,.field select{background:var(--dark3);border:1px solid #2d3748;border-radius:10px;padding:11px 14px;color:var(--text);font-size:14px;font-family:'DM Sans',sans-serif;outline:none;transition:border-color .2s;width:100%}
+.field input:focus,.field select:focus{border-color:var(--gold);box-shadow:0 0 0 3px rgba(201,168,76,.1)}
+.field input::placeholder{color:#4b5563}.field select option{background:var(--dark3)}
+.field-note{font-size:11px;color:var(--muted);margin-top:2px}
+.field-error{font-size:11px;color:var(--red);display:none;margin-top:2px}
+.pw-wrap{position:relative}
+.pw-toggle{position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;color:var(--muted);cursor:pointer;font-size:16px}
+.strength-bar{display:flex;gap:4px;margin-top:6px}.strength-seg{flex:1;height:3px;border-radius:2px;background:#2d3748;transition:background .3s}
+.checkbox-row{display:flex;align-items:flex-start;gap:10px;font-size:13px;color:var(--muted);margin-bottom:14px}
+.checkbox-row input[type=checkbox]{width:15px;height:15px;margin-top:2px;accent-color:var(--gold);flex-shrink:0}
+.checkbox-row a{color:var(--gold);text-decoration:none}
+.btn-primary{width:100%;padding:13px;background:linear-gradient(135deg,var(--gold),var(--gold2));border:none;border-radius:10px;color:#07090f;font-weight:700;font-size:15px;font-family:'Syne',sans-serif;cursor:pointer;transition:opacity .2s;display:flex;align-items:center;justify-content:center;gap:8px;margin-top:6px}
+.btn-primary:hover{opacity:.9}.btn-primary:disabled{opacity:.5;cursor:not-allowed}
+.btn-secondary{width:100%;padding:12px;background:transparent;border:1px solid var(--border);border-radius:10px;color:var(--text);font-size:14px;font-family:'DM Sans',sans-serif;cursor:pointer;transition:background .2s}
+.btn-secondary:hover{background:rgba(255,255,255,.04)}
+.alert{border-radius:8px;padding:10px 14px;font-size:13px;margin-bottom:14px;display:none}
+.alert.error{background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.3);color:var(--red)}
+.upload-zone{border:2px dashed #2d3748;border-radius:12px;padding:20px;text-align:center;cursor:pointer;transition:border-color .2s;margin-bottom:14px}
+.upload-zone:hover{border-color:var(--gold)}
+.success-screen{display:none;text-align:center;padding:40px 20px}
+.success-icon{width:72px;height:72px;border-radius:50%;background:rgba(34,197,94,.15);border:2px solid var(--green);display:flex;align-items:center;justify-content:center;font-size:32px;margin:0 auto 20px}
+.spinner{width:16px;height:16px;border:2px solid rgba(7,9,15,.4);border-top-color:#07090f;border-radius:50%;animation:spin .7s linear infinite;display:none}
+@keyframes spin{to{transform:rotate(360deg)}}
+@media(max-width:900px){body{flex-direction:column}.left{width:100%;min-height:auto;padding:40px 28px;border-right:none;border-bottom:1px solid var(--border)}.right{padding:40px 28px}h1{font-size:30px}}
+@media(max-width:500px){.grid2{grid-template-columns:1fr}.left,.right{padding:28px 20px}}
+</style>
+</head>
+<body>
+<div class="bg-grid"></div>
+<div class="left">
+  <div class="brand"><div class="brand-icon">⚡</div><span class="brand-name">ScalpBot HF</span></div>
+  <h1>Tradez les marchés <em>mondiaux</em></h1>
+  <p class="hero-sub">Créez votre compte de trading réel en 3 minutes. Votre solde de formation est transféré instantanément.</p>
+  <div class="feature"><div class="feature-ico">🔗</div><div class="feature-text"><h3>Lié à votre compte formation</h3><p>Dépôt instantané depuis votre solde d'apprentissage</p></div></div>
+  <div class="feature"><div class="feature-ico">🌍</div><div class="feature-text"><h3>500+ instruments</h3><p>Forex, Actions, Indices via MetaTrader 5</p></div></div>
+  <div class="feature"><div class="feature-ico">⚡</div><div class="feature-text"><h3>Robot ScalpBot intégré</h3><p>Trading haute fréquence automatisé</p></div></div>
+  <div class="feature"><div class="feature-ico">🔒</div><div class="feature-text"><h3>Fonds ségrégués</h3><p>KYC obligatoire • Retrait sous 24h</p></div></div>
+</div>
+
+<div class="right">
+  <div class="form-header">
+    <h2>Créer votre compte</h2>
+    <p>Déjà inscrit ? <a href="/login">Se connecter →</a></p>
+  </div>
+  <div class="steps">
+    <div class="step active" id="si1"><div class="step-num">1</div><span>Identité</span></div>
+    <div class="step-line" id="sl1"></div>
+    <div class="step" id="si2"><div class="step-num">2</div><span>Sécurité</span></div>
+    <div class="step-line" id="sl2"></div>
+    <div class="step" id="si3"><div class="step-num">3</div><span>KYC</span></div>
+  </div>
+  <div class="alert error" id="alertBox"></div>
+
+  <!-- Step 1 -->
+  <div id="step1">
+    <div class="grid2">
+      <div class="field"><label>Prénom</label><input type="text" id="firstName" placeholder="Jean"><span class="field-error" id="e-fn">Requis</span></div>
+      <div class="field"><label>Nom</label><input type="text" id="lastName" placeholder="Dupont"><span class="field-error" id="e-ln">Requis</span></div>
+    </div>
+    <div class="grid2">
+      <div class="field"><label>Date de naissance</label><input type="date" id="birthDate" max=""></div>
+      <div class="field"><label>Nationalité</label>
+        <select id="nationality"><option value="">Sélectionner...</option><option>Française</option><option>Gabonaise</option><option>Congolaise</option><option>Camerounaise</option><option>Ivoirienne</option><option>Sénégalaise</option><option>Belge</option><option>Suisse</option><option>Autre</option></select>
+      </div>
+    </div>
+    <div class="field"><label>Email</label><input type="email" id="email" placeholder="jean@exemple.com"><span class="field-error" id="e-em">Email invalide</span></div>
+    <div class="grid2">
+      <div class="field"><label>Téléphone</label><input type="tel" id="phone" placeholder="+241 77 00 00 00"></div>
+      <div class="field"><label>Pays de résidence</label>
+        <select id="country"><option value="">Sélectionner...</option><option>France</option><option>Gabon</option><option>Congo</option><option>Cameroun</option><option>Côte d'Ivoire</option><option>Sénégal</option><option>Belgique</option><option>Suisse</option><option>Autre</option></select>
+      </div>
+    </div>
+    <div class="field"><label>Identifiant compte formation</label><input type="text" id="learningId" placeholder="Ex: LEARN-2024-XXXXX"><span class="field-note">Trouvez cet ID dans Mon profil sur votre espace formation</span></div>
+    <button class="btn-primary" onclick="goStep2()"><span>Continuer →</span></button>
+  </div>
+
+  <!-- Step 2 -->
+  <div id="step2" style="display:none">
+    <div class="field"><label>Mot de passe</label>
+      <div class="pw-wrap"><input type="password" id="password" placeholder="Minimum 8 caractères" oninput="checkStr()"><button class="pw-toggle" type="button" onclick="togglePw('password',this)">👁</button></div>
+      <div class="strength-bar"><div class="strength-seg" id="s1"></div><div class="strength-seg" id="s2"></div><div class="strength-seg" id="s3"></div><div class="strength-seg" id="s4"></div></div>
+      <span class="field-note" id="strLabel">Force du mot de passe</span>
+    </div>
+    <div class="field"><label>Confirmer le mot de passe</label>
+      <div class="pw-wrap"><input type="password" id="password2" placeholder="Retapez votre mot de passe"><button class="pw-toggle" type="button" onclick="togglePw('password2',this)">👁</button></div>
+      <span class="field-error" id="e-pw">Les mots de passe ne correspondent pas</span>
+    </div>
+    <div class="field"><label>Levier préféré</label>
+      <select id="leverage"><option value="1:10">1:10 — Prudent</option><option value="1:50" selected>1:50 — Standard</option><option value="1:100">1:100 — Avancé</option><option value="1:200">1:200 — Expert</option><option value="1:500">1:500 — Professionnel</option></select>
+      <span class="field-note">Le levier amplifie gains ET pertes</span>
+    </div>
+    <div style="display:flex;gap:12px">
+      <button class="btn-secondary" onclick="goStep(1)">← Retour</button>
+      <button class="btn-primary" style="margin-top:0" onclick="goStep3()">Continuer →</button>
+    </div>
+  </div>
+
+  <!-- Step 3 -->
+  <div id="step3" style="display:none">
+    <div style="background:rgba(201,168,76,.06);border:1px solid var(--border);border-radius:12px;padding:14px;margin-bottom:16px;font-size:12px;color:var(--muted)">
+      <strong style="color:var(--gold);display:block;margin-bottom:4px">🔒 Vérification d'identité</strong>
+      Conformément à la réglementation, nous devons vérifier votre identité. Délai : 24–72h.
+    </div>
+    <div class="grid2">
+      <div class="field"><label>Type de document</label>
+        <select id="docType"><option>Carte nationale d'identité</option><option>Passeport</option><option>Titre de séjour</option><option>Permis de conduire</option></select>
+      </div>
+      <div class="field"><label>N° du document</label><input type="text" id="docNum" placeholder="AB123456"></div>
+    </div>
+    <div class="upload-zone" onclick="document.getElementById('docFront').click()">
+      <span style="font-size:28px">📄</span>
+      <p style="font-size:13px;color:var(--muted);margin-top:8px">Recto du document d'identité</p>
+      <p style="font-size:11px;color:var(--muted);margin-top:4px">JPG, PNG ou PDF — max 5 Mo</p>
+      <input type="file" id="docFront" accept="image/*,.pdf" style="display:none" onchange="showFile(this,'lfFront')">
+      <p id="lfFront" style="font-size:12px;color:var(--gold);margin-top:6px"></p>
+    </div>
+    <div class="upload-zone" onclick="document.getElementById('docAddr').click()">
+      <span style="font-size:28px">🏠</span>
+      <p style="font-size:13px;color:var(--muted);margin-top:8px">Justificatif de domicile (- 3 mois)</p>
+      <input type="file" id="docAddr" accept="image/*,.pdf" style="display:none" onchange="showFile(this,'lfAddr')">
+      <p id="lfAddr" style="font-size:12px;color:var(--gold);margin-top:6px"></p>
+    </div>
+    <div class="checkbox-row"><input type="checkbox" id="terms"><label for="terms">J'accepte les <a href="#">CGU</a> et la <a href="#">Politique de confidentialité</a>. Je confirme que les fonds m'appartiennent.</label></div>
+    <div class="checkbox-row"><input type="checkbox" id="risk"><label for="risk">J'ai lu l'<a href="#">Avertissement sur les risques</a>. Le trading comporte des risques de perte en capital.</label></div>
+    <div style="display:flex;gap:12px">
+      <button class="btn-secondary" onclick="goStep(2)">← Retour</button>
+      <button class="btn-primary" style="margin-top:0" id="submitBtn" onclick="submitForm()">
+        <span id="submitTxt">Créer mon compte ✓</span>
+        <div class="spinner" id="submitSpinner"></div>
+      </button>
+    </div>
+  </div>
+
+  <!-- Success -->
+  <div class="success-screen" id="successScreen">
+    <div class="success-icon">✓</div>
+    <h2 style="font-family:'Syne',sans-serif;font-size:22px;font-weight:700;margin-bottom:12px">Compte créé !</h2>
+    <p style="color:var(--muted);font-size:14px;max-width:340px;margin:0 auto 28px;line-height:1.7">Votre dossier KYC est en cours d'examen (24–72h). Vous pouvez déjà accéder à votre wallet.</p>
+    <button class="btn-primary" style="max-width:280px;margin:0 auto" onclick="location.href='/wallet'">Accéder à mon wallet →</button>
+  </div>
+</div>
+
+<script>
+// Set max date (18 ans)
+const d=new Date();d.setFullYear(d.getFullYear()-18);
+document.getElementById('birthDate').max=d.toISOString().split('T')[0];
+
+function togglePw(id,btn){const i=document.getElementById(id);i.type=i.type==='password'?'text':'password';btn.textContent=i.type==='password'?'👁':'🙈'}
+function showFile(inp,lblId){document.getElementById(lblId).textContent=inp.files[0]?'✓ '+inp.files[0].name:''}
+function showAlert(msg){const el=document.getElementById('alertBox');el.textContent=msg;el.style.display='block';setTimeout(()=>el.style.display='none',5000)}
+
+function goStep(n){
+  [1,2,3].forEach(i=>{
+    document.getElementById('step'+i).style.display=i===n?'block':'none';
+    const ind=document.getElementById('si'+i);
+    if(i<n)ind.className='step done';
+    else if(i===n)ind.className='step active';
+    else ind.className='step';
+  });
+  [1,2].forEach(i=>document.getElementById('sl'+i).className='step-line'+(i<n?' done':''));
+}
+
+function goStep2(){
+  const fn=document.getElementById('firstName').value.trim();
+  const ln=document.getElementById('lastName').value.trim();
+  const em=document.getElementById('email').value.trim();
+  let ok=true;
+  document.getElementById('e-fn').style.display=fn?'none':'block';if(!fn)ok=false;
+  document.getElementById('e-ln').style.display=ln?'none':'block';if(!ln)ok=false;
+  document.getElementById('e-em').style.display=(em&&em.includes('@'))?'none':'block';if(!em||!em.includes('@'))ok=false;
+  if(ok)goStep(2);
+}
+
+function goStep3(){
+  const p1=document.getElementById('password').value;
+  const p2=document.getElementById('password2').value;
+  if(p1.length<8){showAlert('Le mot de passe doit faire au moins 8 caractères');return}
+  if(p1!==p2){document.getElementById('e-pw').style.display='block';return}
+  document.getElementById('e-pw').style.display='none';
+  goStep(3);
+}
+
+function checkStr(){
+  const p=document.getElementById('password').value;
+  const segs=[document.getElementById('s1'),document.getElementById('s2'),document.getElementById('s3'),document.getElementById('s4')];
+  let sc=0;if(p.length>=8)sc++;if(/[A-Z]/.test(p))sc++;if(/[0-9]/.test(p))sc++;if(/[^A-Za-z0-9]/.test(p))sc++;
+  const cols=['#ef4444','#f97316','#eab308','#22c55e'];const labs=['Très faible','Faible','Moyen','Fort'];
+  segs.forEach((s,i)=>s.style.background=i<sc?cols[sc-1]:'#2d3748');
+  document.getElementById('strLabel').textContent=sc>0?'Force : '+labs[sc-1]:'Force du mot de passe';
+}
+
+async function submitForm(){
+  if(!document.getElementById('terms').checked||!document.getElementById('risk').checked){showAlert('Veuillez accepter les conditions');return}
+  const btn=document.getElementById('submitBtn');
+  document.getElementById('submitTxt').style.opacity=0;
+  document.getElementById('submitSpinner').style.display='block';
+  btn.disabled=true;
+  try{
+    const body={
+      firstName:document.getElementById('firstName').value.trim(),
+      lastName:document.getElementById('lastName').value.trim(),
+      email:document.getElementById('email').value.trim(),
+      phone:document.getElementById('phone').value.trim(),
+      password:document.getElementById('password').value,
+      birthDate:document.getElementById('birthDate').value,
+      nationality:document.getElementById('nationality').value,
+      country:document.getElementById('country').value,
+      learningId:document.getElementById('learningId').value.trim(),
+      leverage:document.getElementById('leverage').value,
+    };
+    const r=await fetch('/api/auth/register',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
+    const data=await r.json();
+    if(!r.ok){showAlert(data.error||'Erreur lors de la création du compte');return}
+    document.getElementById('step3').style.display='none';
+    document.getElementById('successScreen').style.display='block';
+  }catch(e){showAlert('Erreur réseau. Réessayez.')}
+  finally{document.getElementById('submitTxt').style.opacity=1;document.getElementById('submitSpinner').style.display='none';btn.disabled=false}
+}
+</script>
+</body>
+</html>
