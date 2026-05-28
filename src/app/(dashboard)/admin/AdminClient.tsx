@@ -163,7 +163,7 @@ export default function AdminClient({ stats: initStats, initialUsers, adminRole 
                 <div style={{ background:'#0c0f1a', border:'1px solid rgba(255,255,255,.07)', borderRadius:13, padding:'18px 22px' }}>
                   <div style={{ fontFamily:"'Syne',sans-serif", fontSize:15, fontWeight:700, marginBottom:14 }}> Actions rapides</div>
                   {[['💼 Ajuster un solde','wallets'],['🪪 Traiter les KYC','kyc'],['👥 Gérer les utilisateurs','users']].map(([lbl,target])=>(
-                    <button key={lbl} onClick={()=>setPage(target as any)} style={{ width:'100%', padding:'11px 14px', background:'rgba(255,255,255,.04)', border:'1px solid rgba(255,255,255,.07)', borderRadius:10, color:'#edf0f7', fontSize:13, textAlign:'left', cursor:'pointer', marginBottom:8, fontFamily:"'DM Sans',sans-serif' }}>
+                    <button key={lbl} onClick={()=>setPage(target as any)} style={{ width:'100%', padding:'11px 14px', background:'rgba(255,255,255,.04)', border:'1px solid rgba(255,255,255,.07)', borderRadius:10, color:'#edf0f7', fontSize:13, textAlign:'left', cursor:'pointer', marginBottom:8, fontFamily:"'DM Sans',sans-serif" }}>
                       {lbl}
                     </button>
                   ))}
