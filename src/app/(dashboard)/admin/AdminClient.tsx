@@ -85,13 +85,13 @@ export default function AdminClient({ stats: initStats, initialUsers, adminRole 
 
   const iStyle = { background:'#111828', border:'1px solid rgba(255,255,255,.08)', borderRadius:9, padding:'10px 13px', color:'#edf0f7', fontSize:13, outline:'none', width:'100%', fontFamily:"'DM Sans',sans-serif" }
 
-  const PAGES = [
+  const PAGES: [string, string, string][] = [
     ['dashboard','📊','Dashboard'],
     ['users','👥','Utilisateurs'],
     ['wallets','💼','Wallets & Soldes'],
-    ['kyc','🪪',`KYC (${stats.kycPending})`],
-    ['audit','🔍','Journal d\'audit'],
-  ] as const
+    ['kyc','🪪','KYC (' + stats.kycPending + ')'],
+    ['audit','🔍',"Journal d'audit"],
+  ]
 
   return (
     <div style={{ display:'flex', minHeight:'100vh', background:'#06080e', fontFamily:"'DM Sans',sans-serif" }}>
