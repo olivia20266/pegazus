@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ScalpBot HF — Connexion</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@300;400;500&family=DM+Mono&display=swap" rel="stylesheet">
+<style>
+:root{--gold:#c9a84c;--gold2:#e8c96a;--dark:#07090f;--dark2:#0d1117;--dark3:#131923;--border:rgba(201,168,76,.18);--text:#e8e4d9;--muted:#6b7280;--red:#ef4444;--green:#22c55e}
+*{margin:0;padding:0;box-sizing:border-box}
+body{min-height:100vh;background:var(--dark);color:var(--text);font-family:'DM Sans',sans-serif;display:flex;align-items:center;justify-content:center;overflow:hidden}
+.bg-grid{position:fixed;inset:0;background-image:linear-gradient(rgba(201,168,76,.04) 1px,transparent 1px),linear-gradient(90deg,rgba(201,168,76,.04) 1px,transparent 1px);background-size:60px 60px;z-index:0}
+.bg-orb{position:fixed;width:500px;height:500px;background:radial-gradient(circle,rgba(201,168,76,.07) 0%,transparent 70%);border-radius:50%;top:-150px;right:-150px;z-index:0;animation:float 8s ease-in-out infinite}
+@keyframes float{0%,100%{transform:translate(0,0)}50%{transform:translate(-20px,20px)}}
+.card{background:var(--dark2);border:1px solid var(--border);border-radius:20px;padding:44px;width:100%;max-width:420px;position:relative;z-index:1;animation:up .5s ease}
+@keyframes up{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:none}}
+.brand{display:flex;align-items:center;justify-content:center;gap:12px;margin-bottom:32px}
+.brand-icon{width:42px;height:42px;border:1px solid var(--gold);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:20px;background:rgba(201,168,76,.08)}
+.brand-name{font-family:'Syne',sans-serif;font-size:18px;font-weight:700;color:var(--gold)}
+h2{font-family:'Syne',sans-serif;font-size:24px;font-weight:700;text-align:center;margin-bottom:6px}
+.sub{text-align:center;color:var(--muted);font-size:14px;margin-bottom:28px}.sub a{color:var(--gold);text-decoration:none}
+.field{display:flex;flex-direction:column;gap:6px;margin-bottom:14px}
+.field label{font-size:11px;font-weight:500;color:#9ca3af;letter-spacing:.06em;text-transform:uppercase}
+.pw-wrap{position:relative}
+.field input{background:var(--dark3);border:1px solid #2d3748;border-radius:10px;padding:12px 16px;color:var(--text);font-size:14px;font-family:'DM Sans',sans-serif;outline:none;transition:border-color .2s;width:100%}
+.field input:focus{border-color:var(--gold);box-shadow:0 0 0 3px rgba(201,168,76,.1)}
+.field input::placeholder{color:#4b5563}
+.pw-toggle{position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;color:var(--muted);cursor:pointer;font-size:16px;padding:4px}
+.btn{width:100%;padding:13px;background:linear-gradient(135deg,var(--gold),var(--gold2));border:none;border-radius:10px;color:#07090f;font-weight:700;font-size:15px;font-family:'Syne',sans-serif;cursor:pointer;transition:opacity .2s;display:flex;align-items:center;justify-content:center;gap:8px}
+.btn:hover{opacity:.9}.btn:disabled{opacity:.5;cursor:not-allowed}
+.alert{border-radius:8px;padding:10px 14px;font-size:13px;margin-bottom:14px;display:none}
+.alert.error{background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.3);color:var(--red)}
+.alert.info{background:rgba(201,168,76,.08);border:1px solid rgba(201,168,76,.3);color:var(--gold)}
+.alert.success{background:rgba(34,197,94,.08);border:1px solid rgba(34,197,94,.3);color:var(--green)}
+.divider{display:flex;align-items:center;gap:12px;color:var(--muted);font-size:12px;margin:16px 0}.divider::before,.divider::after{content:'';flex:1;height:1px;background:#2d3748}
+.btn-ghost{width:100%;padding:12px;background:transparent;border:1px solid var(--border);border-radius:10px;color:var(--text);font-size:14px;font-family:'DM Sans',sans-serif;cursor:pointer;transition:background .2s;display:flex;align-items:center;justify-content:center;gap:8px}
+.btn-ghost:hover{background:rgba(201,168,76,.06)}
+/* OTP */
+.otp-panel{display:none;text-align:center}
+.otp-panel p{font-size:13px;color:var(--muted);margin-bottom:16px}
+.otp-inputs{display:flex;gap:8px;justify-content:center;margin-bottom:16px}
+.otp-inputs input{width:44px;height:50px;background:var(--dark3);border:1px solid #2d3748;border-radius:10px;text-align:center;font-size:22px;font-family:'Syne',sans-serif;color:var(--text);outline:none;transition:border-color .2s}
+.otp-inputs input:focus{border-color:var(--gold)}
+.otp-dev{background:rgba(201,168,76,.06);border:1px solid var(--border);border-radius:8px;padding:8px 14px;font-size:12px;color:var(--gold);font-family:'DM Mono',monospace;margin-bottom:14px;text-align:center}
+.spinner{width:16px;height:16px;border:2px solid rgba(7,9,15,.4);border-top-color:#07090f;border-radius:50%;animation:spin .7s linear infinite;display:none}
+@keyframes spin{to{transform:rotate(360deg)}}
+</style>
+</head>
+<body>
+<div class="bg-grid"></div><div class="bg-orb"></div>
+<div class="card">
+  <div class="brand">
+    <div class="brand-icon">⚡</div>
+    <span class="brand-name">ScalpBot HF</span>
+  </div>
+
+  <!-- LOGIN FORM -->
+  <div id="loginPanel">
+    <h2>Bon retour 👋</h2>
+    <p class="sub">Pas encore inscrit ? <a href="/register">Créer un compte</a></p>
+    <div class="alert error" id="alertBox"></div>
+    <div class="field">
+      <label>Email</label>
+      <input type="email" id="email" placeholder="jean@exemple.com" autocomplete="email">
+    </div>
+    <div class="field">
+      <label>Mot de passe</label>
+      <div class="pw-wrap">
+        <input type="password" id="password" placeholder="••••••••" autocomplete="current-password">
+        <button class="pw-toggle" type="button" onclick="togglePw()">👁</button>
+      </div>
+    </div>
+    <div style="display:flex;justify-content:flex-end;margin-bottom:16px">
+      <a href="#" style="font-size:13px;color:var(--gold);text-decoration:none">Mot de passe oublié ?</a>
+    </div>
+    <button class="btn" id="loginBtn" onclick="doLogin()">
+      <span id="loginTxt">Se connecter</span>
+      <div class="spinner" id="loginSpinner"></div>
+    </button>
+    <div class="divider">ou</div>
+    <button class="btn-ghost" onclick="loginAsDemo()">
+      🎓 Accès démo — jean@gmail.com
+    </button>
+    <div style="margin-top:16px;text-align:center;font-size:11px;color:var(--muted)">
+      🔒 Connexion chiffrée SSL • Compte verrouillé après 5 tentatives
+    </div>
+  </div>
+
+  <!-- OTP PANEL -->
+  <div class="otp-panel" id="otpPanel">
+    <div style="font-size:40px;margin-bottom:12px">📱</div>
+    <h2 style="margin-bottom:8px">Code de vérification</h2>
+    <p>Entrez le code à 6 chiffres envoyé par SMS sur <span id="maskedPhone" style="color:var(--gold)"></span></p>
+    <div class="otp-dev" id="devOtpBox" style="display:none">🔑 Code dev : <strong id="devOtpCode"></strong></div>
+    <div class="alert error" id="otpAlert"></div>
+    <div class="otp-inputs">
+      <input type="text" inputmode="numeric" maxlength="1" id="o1" oninput="otpNext(this,'o2')" onkeydown="otpBack(event,this,null)">
+      <input type="text" inputmode="numeric" maxlength="1" id="o2" oninput="otpNext(this,'o3')" onkeydown="otpBack(event,this,'o1')">
+      <input type="text" inputmode="numeric" maxlength="1" id="o3" oninput="otpNext(this,'o4')" onkeydown="otpBack(event,this,'o2')">
+      <input type="text" inputmode="numeric" maxlength="1" id="o4" oninput="otpNext(this,'o5')" onkeydown="otpBack(event,this,'o3')">
+      <input type="text" inputmode="numeric" maxlength="1" id="o5" oninput="otpNext(this,'o6')" onkeydown="otpBack(event,this,'o4')">
+      <input type="text" inputmode="numeric" maxlength="1" id="o6" oninput="otpLast(this)"     onkeydown="otpBack(event,this,'o5')">
+    </div>
+    <button class="btn" id="otpBtn" onclick="verifyOtp()" style="margin-bottom:12px">
+      <span id="otpTxt">Vérifier</span>
+      <div class="spinner" id="otpSpinner"></div>
+    </button>
+    <button class="btn-ghost" onclick="resendOtp()">Renvoyer le code</button>
+  </div>
+</div>
+
+<script>
+let currentUserId = null;
+
+function togglePw(){const i=document.getElementById('password');i.type=i.type==='password'?'text':'password'}
+
+function showAlert(id,msg,type='error'){
+  const el=document.getElementById(id);
+  el.textContent=msg; el.className=`alert ${type}`; el.style.display='block';
+  setTimeout(()=>el.style.display='none',5000);
+}
+
+function setLoading(btnId,spinnerId,txtId,loading){
+  document.getElementById(btnId).disabled=loading;
+  document.getElementById(spinnerId).style.display=loading?'block':'none';
+  document.getElementById(txtId).style.opacity=loading?0:1;
+}
+
+async function doLogin(){
+  const email=document.getElementById('email').value.trim();
+  const password=document.getElementById('password').value;
+  if(!email||!password){showAlert('alertBox','Veuillez remplir tous les champs');return}
+  setLoading('loginBtn','loginSpinner','loginTxt',true);
+  try{
+    const r=await fetch('/api/auth/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email,password})});
+    const data=await r.json();
+    if(!r.ok){showAlert('alertBox',data.error||'Erreur de connexion');return}
+    currentUserId=data.userId;
+    document.getElementById('maskedPhone').textContent=data.maskedPhone||'votre téléphone';
+    if(data.devOtp){
+      document.getElementById('devOtpBox').style.display='block';
+      document.getElementById('devOtpCode').textContent=data.devOtp;
+    }
+    document.getElementById('loginPanel').style.display='none';
+    document.getElementById('otpPanel').style.display='block';
+    document.getElementById('o1').focus();
+  }catch(e){showAlert('alertBox','Erreur réseau. Réessayez.')}
+  finally{setLoading('loginBtn','loginSpinner','loginTxt',false)}
+}
+
+async function verifyOtp(){
+  const code=['o1','o2','o3','o4','o5','o6'].map(id=>document.getElementById(id).value).join('');
+  if(code.length<6){showAlert('otpAlert','Entrez les 6 chiffres');return}
+  setLoading('otpBtn','otpSpinner','otpTxt',true);
+  try{
+    const r=await fetch('/api/auth/verify-otp',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({userId:currentUserId,otpCode:code})});
+    const data=await r.json();
+    if(!r.ok){showAlert('otpAlert',data.error||'Code invalide');['o1','o2','o3','o4','o5','o6'].forEach(id=>{document.getElementById(id).value=''});document.getElementById('o1').focus();return}
+    window.location.href=data.redirect||'/wallet';
+  }catch(e){showAlert('otpAlert','Erreur réseau')}
+  finally{setLoading('otpBtn','otpSpinner','otpTxt',false)}
+}
+
+async function resendOtp(){
+  document.getElementById('email').value&&await doLogin();
+}
+
+function loginAsDemo(){
+  document.getElementById('email').value='jean@gmail.com';
+  document.getElementById('password').value='User@1234';
+  doLogin();
+}
+
+function otpNext(inp,nextId){
+  if(inp.value&&inp.value.match(/[0-9]/))document.getElementById(nextId)?.focus();
+  else inp.value='';
+}
+function otpLast(inp){
+  if(inp.value&&inp.value.match(/[0-9]/))verifyOtp();
+  else inp.value='';
+}
+function otpBack(e,inp,prevId){
+  if(e.key==='Backspace'&&!inp.value&&prevId)document.getElementById(prevId)?.focus();
+}
+
+// Soumission sur Enter
+document.addEventListener('keydown',e=>{
+  if(e.key==='Enter'){
+    if(document.getElementById('loginPanel').style.display!=='none')doLogin();
+  }
+});
+</script>
+</body>
+</html>
