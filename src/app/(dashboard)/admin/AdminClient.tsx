@@ -70,7 +70,7 @@ export default function AdminClient({ stats: initStats, initialUsers, adminRole 
     u.last_name.toLowerCase().includes(search.toLowerCase())
   )
 
-  const badge = (s:string) => {
+  function Badge({ s }: { s: string }) {
     const m: Record<string,[string,string]> = {
       VERIFIED:     ['#2dd4a0','rgba(45,212,160,.12)'],
       PENDING:      ['#f0b43c','rgba(240,180,60,.12)'],
@@ -156,14 +156,14 @@ export default function AdminClient({ stats: initStats, initialUsers, adminRole 
                     <div key={u.id} style={{ display:'flex', alignItems:'center', gap:10, padding:'10px 0', borderBottom:'1px solid rgba(255,255,255,.04)' }}>
                       <div style={{ width:28,height:28,borderRadius:'50%',background:'linear-gradient(135deg,#d4a843,#f0c96a)',display:'flex',alignItems:'center',justifyContent:'center',fontSize:11,fontWeight:700,color:'#06080e',flexShrink:0 }}>{u.first_name[0]}{u.last_name[0]}</div>
                       <div style={{ flex:1 }}><div style={{ fontSize:13,fontWeight:500 }}>{u.first_name} {u.last_name}</div><div style={{ fontSize:11,color:'#5a677d' }}>{u.email}</div></div>
-                      {badge(u.kyc_status)}
+                      {<Badge s={u.kyc_status} />}
                     </div>
                   ))}
                 </div>
                 <div style={{ background:'#0c0f1a', border:'1px solid rgba(255,255,255,.07)', borderRadius:13, padding:'18px 22px' }}>
                   <div style={{ fontFamily:"'Syne',sans-serif", fontSize:15, fontWeight:700, marginBottom:14 }}> Actions rapides</div>
                   {[['💼 Ajuster un solde','wallets'],['🪪 Traiter les KYC','kyc'],['👥 Gérer les utilisateurs','users']].map(([lbl,target])=>(
-                    <button key={lbl} onClick={()=>setPage(target as any)} style={{ width:'100%', padding:'11px 14px', background:'rgba(255,255,255,.04)', border:'1px solid rgba(255,255,255,.07)', borderRadius:10, color:'#edf0f7', fontSize:13, textAlign:'left', cursor:'pointer', marginBottom:8, fontFamily:"'DM Sans',sans-serif" }}>
+                    <button key={lbl} onClick={()=>setPage(target as any)} style={{ width:'100%', padding:'11px 14px', background:'rgba(255,255,255,.04)', border:'1px solid rgba(255,255,255,.07)', borderRadius:10, color:'#edf0f7', fontSize:13, textAlign:'left', cursor:'pointer', marginBottom:8, fontFamily:"'DM Sans',sans-serif' }}>
                       {lbl}
                     </button>
                   ))}
@@ -215,7 +215,7 @@ export default function AdminClient({ stats: initStats, initialUsers, adminRole 
                         </> : page==='kyc' ? <>
                           <td style={{ padding:'12px 16px', fontSize:12, color:'#8a96aa' }}>{u.email}</td>
                           <td style={{ padding:'12px 16px', fontSize:13 }}>{u.country||'—'}</td>
-                          <td style={{ padding:'12px 16px' }}>{badge(u.kyc_status)}</td>
+                          <td style={{ padding:'12px 16px' }}>{<Badge s={u.kyc_status} />}</td>
                           <td style={{ padding:'12px 16px', fontSize:11, color:'#5a677d' }}>{fmtDate(u.created_at)}</td>
                           <td style={{ padding:'12px 16px' }}>
                             {u.kyc_status==='PENDING' ? (
@@ -228,9 +228,9 @@ export default function AdminClient({ stats: initStats, initialUsers, adminRole 
                         </> : <>
                           <td style={{ padding:'12px 16px', fontSize:12, color:'#8a96aa' }}>{u.email}</td>
                           <td style={{ padding:'12px 16px', fontSize:13 }}>{u.country||'—'}</td>
-                          <td style={{ padding:'12px 16px' }}>{badge(u.kyc_status)}</td>
+                          <td style={{ padding:'12px 16px' }}>{<Badge s={u.kyc_status} />}</td>
                           <td style={{ padding:'12px 16px', fontFamily:"'DM Mono',monospace", fontSize:13, color:'#2dd4a0' }}>{fmt(u.wallets?.balance||0)}</td>
-                          <td style={{ padding:'12px 16px' }}>{badge(u.status)}</td>
+                          <td style={{ padding:'12px 16px' }}>{<Badge s={u.status} />}</td>
                           <td style={{ padding:'12px 16px' }}>
                             <div style={{ display:'flex', gap:6 }}>
                               <button onClick={()=>setAdjUser(u)} style={{ padding:'4px 9px', background:'rgba(212,168,67,.12)', border:'none', borderRadius:6, color:'#d4a843', fontSize:11, fontWeight:600, cursor:'pointer' }}></button>
