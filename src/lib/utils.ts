@@ -10,10 +10,3 @@ export function generateOTP(): string {
 export function generateMT5Login(): string {
   return Math.floor(10000000 + Math.random() * 89999999).toString()
 }
-
-export function generateOTP(): string {
-  return Math.floor(100000 + Math.random() * 900000).toString()
-}
-export function generateMT5Login(): string {
-  return Math.floor(10000000 + Math.random() * 89999999).toString()
-}
