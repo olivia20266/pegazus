@@ -3,7 +3,7 @@ import React, { useState, useCallback } from 'react'
 import toast from 'react-hot-toast'
 import { fmt, fmtDate } from '@/lib/utils'
 
-type User = { id:string; first_name:string; last_name:string; email:string; country?:string; kyc_status:string; status:string; role:string; wallets?:{ balance:number; free_margin:number; learning_balance:number; mt5_login:string }; created_at:string }
+type User = { id:string; first_name:string; last_name:string; email:string; country?:string|null; kyc_status:string; status:string; role:string; wallets?:{ balance:number; free_margin:number; learning_balance:number; mt5_login:string }|null; created_at:string; [key:string]:unknown }
 type Stats = { totalUsers:number; kycPending:number; wdPending:number; totalFunds:number }
 type Props = { stats: Stats; initialUsers: User[]; adminRole: string }
 
