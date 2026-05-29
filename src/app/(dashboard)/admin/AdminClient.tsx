@@ -1,6 +1,7 @@
 'use client'
 // ZERO import Supabase ici — toutes les mutations passent par /api/admin/*
 // Le navigateur ne voit que ce fichier, minifié et obfusqué
+import React from 'react'
 import { useState, useCallback } from 'react'
 import toast from 'react-hot-toast'
 import { fmt, fmtDate } from '@/lib/utils'
@@ -11,12 +12,12 @@ type Stats = { totalUsers:number; kycPending:number; wdPending:number; totalFund
 type Props = { stats: Stats; initialUsers: User[]; adminRole: string }
 
 export default function AdminClient({ stats: initStats, initialUsers, adminRole }: Props) {
-  const [page,     setPage]     = useState<'dashboard'|'users'|'wallets'|'kyc'|'audit'>('dashboard')
+  const [page,     setPage]     = useState('dashboard' as 'dashboard'|'users'|'wallets'|'kyc'|'audit')
   const [users,    setUsers]    = useState(initialUsers)
   const [stats,    setStats]    = useState(initStats)
   const [search,   setSearch]   = useState('')
-  const [adjUser,  setAdjUser]  = useState<User|null>(null)
-  const [adjType,  setAdjType]  = useState<'credit'|'debit'>('credit')
+  const [adjUser,  setAdjUser]  = useState(null as User|null)
+  const [adjType,  setAdjType]  = useState('credit' as 'credit'|'debit')
   const [adjAmt,   setAdjAmt]   = useState('')
   const [adjReason,setAdjReason]= useState('bonus')
   const [adjNote,  setAdjNote]  = useState('')
@@ -70,8 +71,8 @@ export default function AdminClient({ stats: initStats, initialUsers, adminRole 
     u.last_name.toLowerCase().includes(search.toLowerCase())
   )
 
-  function Badge({ s }: { s: string }) {
-    const m: Record<string,[string,string]> = {
+  function badge(s:string) {
+    const m: {[key:string]:[string,string]} = {
       VERIFIED:     ['#2dd4a0','rgba(45,212,160,.12)'],
       PENDING:      ['#f0b43c','rgba(240,180,60,.12)'],
       REJECTED:     ['#f0544f','rgba(240,84,79,.12)'],
@@ -80,12 +81,12 @@ export default function AdminClient({ stats: initStats, initialUsers, adminRole 
       NOT_SUBMITTED:['#5a677d','rgba(90,103,125,.12)'],
     }
     const [col,bg] = m[s]||['#5a677d','rgba(90,103,125,.12)']
-    return <span style={{ fontSize:10, fontWeight:700, padding:'3px 9px', borderRadius:20, background:bg, color:col }}>{s}</span>
+    return (<span style={{ fontSize:10, fontWeight:700, padding:'3px 9px', borderRadius:20, background:bg, color:col }}>{s}</span>)
   }
 
   const iStyle = { background:'#111828', border:'1px solid rgba(255,255,255,.08)', borderRadius:9, padding:'10px 13px', color:'#edf0f7', fontSize:13, outline:'none', width:'100%', fontFamily:"'DM Sans',sans-serif" }
 
-  const PAGES: [string, string, string][] = [
+  const PAGES = [
     ['dashboard','📊','Dashboard'],
     ['users','👥','Utilisateurs'],
     ['wallets','💼','Wallets & Soldes'],
@@ -156,7 +157,7 @@ export default function AdminClient({ stats: initStats, initialUsers, adminRole 
                     <div key={u.id} style={{ display:'flex', alignItems:'center', gap:10, padding:'10px 0', borderBottom:'1px solid rgba(255,255,255,.04)' }}>
                       <div style={{ width:28,height:28,borderRadius:'50%',background:'linear-gradient(135deg,#d4a843,#f0c96a)',display:'flex',alignItems:'center',justifyContent:'center',fontSize:11,fontWeight:700,color:'#06080e',flexShrink:0 }}>{u.first_name[0]}{u.last_name[0]}</div>
                       <div style={{ flex:1 }}><div style={{ fontSize:13,fontWeight:500 }}>{u.first_name} {u.last_name}</div><div style={{ fontSize:11,color:'#5a677d' }}>{u.email}</div></div>
-                      {<Badge s={u.kyc_status} />}
+                      {badge(u.kyc_status)}
                     </div>
                   ))}
                 </div>
@@ -215,7 +216,7 @@ export default function AdminClient({ stats: initStats, initialUsers, adminRole 
                         </> : page==='kyc' ? <>
                           <td style={{ padding:'12px 16px', fontSize:12, color:'#8a96aa' }}>{u.email}</td>
                           <td style={{ padding:'12px 16px', fontSize:13 }}>{u.country||'—'}</td>
-                          <td style={{ padding:'12px 16px' }}>{<Badge s={u.kyc_status} />}</td>
+                          <td style={{ padding:'12px 16px' }}>{badge(u.kyc_status)}</td>
                           <td style={{ padding:'12px 16px', fontSize:11, color:'#5a677d' }}>{fmtDate(u.created_at)}</td>
                           <td style={{ padding:'12px 16px' }}>
                             {u.kyc_status==='PENDING' ? (
@@ -228,9 +229,9 @@ export default function AdminClient({ stats: initStats, initialUsers, adminRole 
                         </> : <>
                           <td style={{ padding:'12px 16px', fontSize:12, color:'#8a96aa' }}>{u.email}</td>
                           <td style={{ padding:'12px 16px', fontSize:13 }}>{u.country||'—'}</td>
-                          <td style={{ padding:'12px 16px' }}>{<Badge s={u.kyc_status} />}</td>
+                          <td style={{ padding:'12px 16px' }}>{badge(u.kyc_status)}</td>
                           <td style={{ padding:'12px 16px', fontFamily:"'DM Mono',monospace", fontSize:13, color:'#2dd4a0' }}>{fmt(u.wallets?.balance||0)}</td>
-                          <td style={{ padding:'12px 16px' }}>{<Badge s={u.status} />}</td>
+                          <td style={{ padding:'12px 16px' }}>{badge(u.status)}</td>
                           <td style={{ padding:'12px 16px' }}>
                             <div style={{ display:'flex', gap:6 }}>
                               <button onClick={()=>setAdjUser(u)} style={{ padding:'4px 9px', background:'rgba(212,168,67,.12)', border:'none', borderRadius:6, color:'#d4a843', fontSize:11, fontWeight:600, cursor:'pointer' }}></button>
