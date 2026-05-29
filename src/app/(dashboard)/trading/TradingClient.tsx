@@ -358,7 +358,7 @@ export default function TradingClient({ user, wallet: initWallet }: { user:any; 
         if (crossUp&&rsiNow>50&&rsiNow<65) {
           setPositions(prev=>{
             if (prev.filter(p=>p.type==='BUY').length>=2) { addLog('⛔ Max BUY atteint'); return prev }
-            const price=wsRef.current?.(tick?.ask||closes[closes.length-1])||tick?.ask||closes[closes.length-1]
+            const price=tick?.ask||closes[closes.length-1]
             const pip=SYMBOLS.find(s=>s.id===symbol)?.pip||0.0001
             const np:Position={id:Date.now().toString(),symbol,type:'BUY',lot:0.01,openPrice:price,currentPrice:price,sl:price-15*pip,tp:price+30*pip,pl:0,pip:0,openTime:new Date().toLocaleTimeString('fr-FR')}
             addLog(`📈 Robot BUY 0.01 @ ${price.toFixed(3)}`)
