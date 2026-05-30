@@ -4,7 +4,7 @@ import { requireAdmin } from '@/lib/admin-guard'
 
 export async function PATCH(req: NextRequest, { params }: { params: { id: string } }) {
   const admin = await requireAdmin()
-  if (!admin) return NextResponse.json({ error: 'Accès refusé' }, { status: 403 })
+  if (!admin) return NextResponse.json({ error: 'AccÃ¨s refusÃ©' }, { status: 403 })
 
   const { action, note } = await req.json()
   const { data: tx } = await supabaseAdmin.from('transactions').select('*').eq('id', params.id).single()
@@ -22,6 +22,7 @@ export async function PATCH(req: NextRequest, { params }: { params: { id: string
   await supabaseAdmin.from('audit_logs').insert({
     admin_id: admin.user.id, target_id: tx.user_id,
     action: `withdrawal.${action}`, details: { note, amount: tx.amount },
+    ip:     null,
   })
 
   return NextResponse.json({ ok: true, action })
