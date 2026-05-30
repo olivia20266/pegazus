@@ -4,7 +4,7 @@ import { requireAdmin } from '@/lib/admin-guard'
 
 export async function PATCH(req: NextRequest, { params }: { params: { id: string } }) {
   const admin = await requireAdmin()
-  if (!admin) return NextResponse.json({ error: 'AccÃ¨s refusÃ©' }, { status: 403 })
+  if (!admin) return NextResponse.json({ error: 'AccÃÂ¨s refusÃÂ©' }, { status: 403 })
 
   const { action, reason, note } = await req.json()
   if (!['approve','reject'].includes(action))
@@ -17,7 +17,7 @@ export async function PATCH(req: NextRequest, { params }: { params: { id: string
   await supabaseAdmin.from('profiles').update(updateData).eq('id', params.id)
   await supabaseAdmin.from('audit_logs').insert({
     admin_id: admin.user.id, target_id: params.id,
-    action: `kyc.${action}`, details: { reason, note },
+    action: `kyc.${action}`, details: { reason: reason ?? null, note: note ?? null },
     ip:     null,
   })
 
