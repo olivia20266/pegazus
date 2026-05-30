@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { supabaseAdmin } from '@/lib/supabase'
 import crypto from 'crypto'
 
-// Clé secrète partagée entre Vertex et Pegazus
+// ClÃ© secrÃ¨te partagÃ©e entre Vertex et Pegazus
 const SECRET = process.env.VERTEX_MENTOR_SECRET || ''
 
 function verifySignature(body: string, sig: string): boolean {
@@ -16,7 +16,7 @@ export async function POST(req: NextRequest) {
 
   if (!verifySignature(body, sig)) {
     console.warn('[Vertex Webhook] Signature invalide')
-    return NextResponse.json({ error: 'Non autorisé' }, { status: 401 })
+    return NextResponse.json({ error: 'Non autorisÃ©' }, { status: 401 })
   }
 
   const payload = JSON.parse(body)
@@ -26,14 +26,14 @@ export async function POST(req: NextRequest) {
 
   switch (event) {
 
-    // ── Vertex : nouveau utilisateur créé → créer compte Pegazus automatiquement
+    // ââ Vertex : nouveau utilisateur crÃ©Ã© â crÃ©er compte Pegazus automatiquement
     case 'user.created': {
       const {
         learning_id, email, first_name, last_name,
         country, phone, initial_balance = 0
       } = data
 
-      // Vérifier si le compte Pegazus existe déjà
+      // VÃ©rifier si le compte Pegazus existe dÃ©jÃ 
       const { data: existing } = await supabaseAdmin
         .from('profiles').select('id').eq('learning_id', learning_id).single()
 
@@ -41,23 +41,23 @@ export async function POST(req: NextRequest) {
         return NextResponse.json({ ok: true, action: 'already_exists', pegazus_id: existing.id })
       }
 
-      // Créer l'utilisateur dans Supabase Auth
+      // CrÃ©er l'utilisateur dans Supabase Auth
       const { data: authUser, error: authErr } = await supabaseAdmin.auth.admin.createUser({
         email,
-        password: crypto.randomBytes(16).toString('hex'), // Mot de passe aléatoire
+        password: crypto.randomBytes(16).toString('hex'), // Mot de passe alÃ©atoire
         email_confirm: true,
         user_metadata: { first_name, last_name, from_vertex: true }
       })
 
       if (authErr || !authUser.user) {
-        console.error('[Vertex] Erreur création auth:', authErr)
+        console.error('[Vertex] Erreur crÃ©ation auth:', authErr)
         return NextResponse.json({ error: authErr?.message }, { status: 500 })
       }
 
       const uid = authUser.user.id
       const mt5 = Math.floor(10000000 + Math.random() * 89999999).toString()
 
-      // Créer le profil Pegazus
+      // CrÃ©er le profil Pegazus
       await supabaseAdmin.from('profiles').insert({
         id:          uid,
         first_name,
@@ -71,7 +71,7 @@ export async function POST(req: NextRequest) {
         leverage:    '1:50',
       })
 
-      // Créer le wallet
+      // CrÃ©er le wallet
       await supabaseAdmin.from('wallets').insert({
         user_id:          uid,
         balance:          initial_balance,
@@ -83,6 +83,9 @@ export async function POST(req: NextRequest) {
         currency:         'USD',
         mt5_login:        mt5,
         mt5_server:       'Pegazus-Live01',
+        source:  null,
+        destination:  null,
+        reference:  null,
       })
 
       // Transaction initiale si solde > 0
@@ -94,8 +97,10 @@ export async function POST(req: NextRequest) {
           currency:     'USD',
           status:       'COMPLETED',
           source:       'Vertex Mentor',
-          description:  'Compte créé depuis Vertex Mentor',
+          description:  'Compte crÃ©Ã© depuis Vertex Mentor',
           completed_at: new Date().toISOString(),
+          destination:  null,
+          reference:  null,
         })
       }
 
@@ -105,9 +110,10 @@ export async function POST(req: NextRequest) {
         target_id: uid,
         action:    'user.created_from_vertex',
         details:   { learning_id, email, initial_balance, mt5_login: mt5 },
+        ip:     null,
       })
 
-      console.log(`[Vertex] Compte Pegazus créé pour ${email} (${learning_id})`)
+      console.log(`[Vertex] Compte Pegazus crÃ©Ã© pour ${email} (${learning_id})`)
       return NextResponse.json({
         ok:          true,
         action:      'created',
@@ -116,7 +122,7 @@ export async function POST(req: NextRequest) {
       })
     }
 
-    // ── Vertex : mise à jour du solde formation
+    // ââ Vertex : mise Ã  jour du solde formation
     case 'balance.updated': {
       const { learning_id, new_balance } = data
       const { data: profile } = await supabaseAdmin
@@ -131,7 +137,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ ok: true })
     }
 
-    // ── Vertex : KYC validé sur Vertex → MAJ Pegazus
+    // ââ Vertex : KYC validÃ© sur Vertex â MAJ Pegazus
     case 'kyc.verified': {
       const { learning_id } = data
       const { data: profile } = await supabaseAdmin
@@ -145,7 +151,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ ok: true })
     }
 
-    // ── Vertex admin ajuste le solde → répercuter sur Pegazus
+    // ââ Vertex admin ajuste le solde â rÃ©percuter sur Pegazus
     case 'admin.balance_adjusted': {
       const { learning_id, delta, reason, admin_note } = data
       const { data: profile } = await supabaseAdmin
@@ -176,8 +182,10 @@ export async function POST(req: NextRequest) {
         source:       'Admin Vertex Mentor',
         reason,
         admin_note,
-        description:  `Ajustement depuis Vertex CRM — ${reason}`,
+        description:  `Ajustement depuis Vertex CRM â ${reason}`,
         completed_at: new Date().toISOString(),
+        destination:  null,
+        reference:  null,
       })
 
       return NextResponse.json({ ok: true, newBalance })
