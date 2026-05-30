@@ -4,7 +4,7 @@ import { getServerSession } from '@/lib/supabase-server'
 
 export async function POST(req: NextRequest) {
   const session = await getServerSession()
-  if (!session) return NextResponse.json({ error: 'Non autorisÃÂ©' }, { status: 401 })
+  if (!session) return NextResponse.json({ error: 'Non autorisÃÂÃÂ©' }, { status: 401 })
 
   const {
     positionId, symbol, type, lot,
@@ -13,7 +13,7 @@ export async function POST(req: NextRequest) {
 
   const userId = session.user.id
 
-  // 1. RÃÂ©cupÃÂ©rer le wallet actuel
+  // 1. RÃÂÃÂ©cupÃÂÃÂ©rer le wallet actuel
   const { data: wallet } = await supabaseAdmin
     .from('wallets')
     .select('*')
@@ -25,7 +25,7 @@ export async function POST(req: NextRequest) {
   const newBalance    = Math.max(0, wallet.balance + pl)
   const newLearningBal = Math.max(0, wallet.learning_balance + pl)
 
-  // 2. Mettre ÃÂ  jour le wallet (balance + learning_balance en mÃÂªme temps)
+  // 2. Mettre ÃÂÃÂ  jour le wallet (balance + learning_balance en mÃÂÃÂªme temps)
   const { data: updatedWallet } = await supabaseAdmin
     .from('wallets')
     .update({
@@ -46,13 +46,13 @@ export async function POST(req: NextRequest) {
     currency:     'USD',
     status:       'COMPLETED',
     source:       symbol,
-    description:  `Trade fermÃÂ© ${type} ${lot} lot Ã¢ÂÂ ${reason} (${isWin ? 'gain' : 'perte'})`,
+    description:  `Trade fermÃÂÃÂ© ${type} ${lot} lot ÃÂ¢ÃÂÃÂ ${reason} (${isWin ? 'gain' : 'perte'})`,
     completed_at: new Date().toISOString(),
     destination:  null,
     reference:  null,
   })
 
-  // 4. Notification admin (entrÃÂ©e dans audit_logs pour que l'admin voie)
+  // 4. Notification admin (entrÃÂÃÂ©e dans audit_logs pour que l'admin voie)
   await supabaseAdmin.from('audit_logs').insert({
     admin_id:  userId,   // On utilise userId comme placeholder (sera vu par admin)
     target_id: userId,
@@ -62,7 +62,7 @@ export async function POST(req: NextRequest) {
       pl: pl ?? null, reason: reason ?? null,
       previousBalance:  wallet.balance ?? null,
       newBalance: newBalance ?? null,
-       newLearningBal ?? nullance: newLearningBal,
+       newLearningBalance: newLearningBal,
     },
     ip:     null,
   })
@@ -91,7 +91,7 @@ export async function POST(req: NextRequest) {
     )
     if (!vertexRes.ok) console.error('[Vertex] Sync failed:', await vertexRes.text())
   } catch (err) {
-    // Ne pas bloquer si vertex est indisponible Ã¢ÂÂ on logue seulement
+    // Ne pas bloquer si vertex est indisponible ÃÂ¢ÃÂÃÂ on logue seulement
     console.error('[Vertex] Unreachable:', err)
   }
 
