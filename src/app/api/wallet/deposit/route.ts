@@ -4,7 +4,7 @@ import { getServerSession } from '@/lib/supabase-server'
 
 export async function POST(req: NextRequest) {
   const session = await getServerSession()
-  if (!session) return NextResponse.json({ error: 'Non autorisé' }, { status: 401 })
+  if (!session) return NextResponse.json({ error: 'Non autorisÃ©' }, { status: 401 })
 
   const { amount, source } = await req.json()
   const amt = parseFloat(amount)
@@ -34,8 +34,10 @@ export async function POST(req: NextRequest) {
     currency:    'USD',
     status:      'COMPLETED',
     source:      source === 'learning' ? 'Site de formation' : 'Virement bancaire',
-    description: `Dépôt depuis ${source === 'learning' ? 'le site de formation' : 'virement bancaire'}`,
+    description: `DÃ©pÃ´t depuis ${source === 'learning' ? 'le site de formation' : 'virement bancaire'}`,
     completed_at: new Date().toISOString(),
+    destination:  null,
+    reference:  null,
   }).select().single()
 
   return NextResponse.json({ wallet: updated, transaction: tx })
