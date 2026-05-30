@@ -25,18 +25,18 @@ export async function POST(req: NextRequest) {
     const mt5    = generateMT5Login()
     const learnBal = data.learningId ? 850 : 0
 
-    // 1. Créer l'utilisateur Supabase Auth
+    // 1. CrÃ©er l'utilisateur Supabase Auth
     const { data: authData, error: authErr } = await supabaseAdmin.auth.admin.createUser({
       email: data.email,
       password: data.password,
-      email_confirm: true,  // Pas de vérif email en dev
+      email_confirm: true,  // Pas de vÃ©rif email en dev
     })
     if (authErr || !authData.user)
-      return NextResponse.json({ error: authErr?.message || 'Erreur création compte' }, { status: 400 })
+      return NextResponse.json({ error: authErr?.message || 'Erreur crÃ©ation compte' }, { status: 400 })
 
     const uid = authData.user.id
 
-    // 2. Créer le profil
+    // 2. CrÃ©er le profil
     const { error: profileErr } = await supabaseAdmin.from('profiles').insert({
       id:           uid,
       first_name:   data.firstName,
@@ -58,7 +58,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: profileErr.message }, { status: 500 })
     }
 
-    // 3. Créer le wallet
+    // 3. CrÃ©er le wallet
     await supabaseAdmin.from('wallets').insert({
       user_id:          uid,
       balance:          0,
@@ -70,12 +70,15 @@ export async function POST(req: NextRequest) {
       currency:         'USD',
       mt5_login:        mt5,
       mt5_server:       'Pegazus-Live01',
+      source:  null,
+      destination:  null,
+      reference:  null,
     })
 
     return NextResponse.json({ ok: true, userId: uid }, { status: 201 })
   } catch (err) {
     if (err instanceof z.ZodError)
-      return NextResponse.json({ error: 'Données invalides', details: err.errors }, { status: 400 })
+      return NextResponse.json({ error: 'DonnÃ©es invalides', details: err.errors }, { status: 400 })
     console.error(err)
     return NextResponse.json({ error: 'Erreur serveur' }, { status: 500 })
   }
