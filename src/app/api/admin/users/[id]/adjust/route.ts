@@ -12,7 +12,7 @@ const schema = z.object({
 
 export async function POST(req: NextRequest, { params }: { params: { id: string } }) {
   const admin = await requireAdmin()
-  if (!admin) return NextResponse.json({ error: 'Accès refusé' }, { status: 403 })
+  if (!admin) return NextResponse.json({ error: 'AccÃ¨s refusÃ©' }, { status: 403 })
 
   try {
     const body  = schema.parse(await req.json())
@@ -28,7 +28,7 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
     const newBalance      = wallet.balance + delta
     const newLearningBal  = Math.max(0, wallet.learning_balance + delta)
 
-    // ── MAJ wallet (le trigger Supabase notifiera Vertex automatiquement)
+    // ââ MAJ wallet (le trigger Supabase notifiera Vertex automatiquement)
     const { data: updated } = await supabaseAdmin
       .from('wallets')
       .update({
@@ -40,7 +40,7 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
       .eq('user_id', params.id)
       .select().single()
 
-    // ── Transaction
+    // ââ Transaction
     await supabaseAdmin.from('transactions').insert({
       user_id:      params.id,
       type:         'MANUAL_ADJUSTMENT',
@@ -51,11 +51,14 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
       reason:       body.reason,
       admin_note:   body.note,
       admin_id:     admin.user.id,
-      description:  `Ajustement admin Pegazus — ${body.reason}`,
+      description:  `Ajustement admin Pegazus â ${body.reason}`,
       completed_at: new Date().toISOString(),
+      source:  null,
+      destination:  null,
+      reference:  null,
     })
 
-    // ── Audit log
+    // ââ Audit log
     await supabaseAdmin.from('audit_logs').insert({
       admin_id:  admin.user.id,
       target_id: params.id,
@@ -65,10 +68,11 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
         previousBalance: wallet.balance, newBalance,
         previousLearning: wallet.learning_balance, newLearningBalance: newLearningBal,
         syncedToVertex: true,
+      ip:     null,
       },
     })
 
-    // ── Sync Vertex (fallback si le trigger pg_net ne marche pas)
+    // ââ Sync Vertex (fallback si le trigger pg_net ne marche pas)
     const { data: profile } = await supabaseAdmin
       .from('profiles').select('learning_id, first_name, last_name').eq('id', params.id).single()
 
@@ -95,8 +99,8 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
           }),
         })
       } catch (e) {
-        console.warn('[Vertex Sync] Fallback HTTP échoué:', e)
-        // Ne pas bloquer — le trigger Supabase prend le relais
+        console.warn('[Vertex Sync] Fallback HTTP Ã©chouÃ©:', e)
+        // Ne pas bloquer â le trigger Supabase prend le relais
       }
     }
 
@@ -104,7 +108,7 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
 
   } catch (err) {
     if (err instanceof z.ZodError)
-      return NextResponse.json({ error: 'Données invalides', details: err.errors }, { status: 400 })
+      return NextResponse.json({ error: 'DonnÃ©es invalides', details: err.errors }, { status: 400 })
     console.error(err)
     return NextResponse.json({ error: 'Erreur serveur' }, { status: 500 })
   }
