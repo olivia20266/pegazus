@@ -1,8 +1,8 @@
 'use server'
-// âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
-//  Server Actions WALLET â exÃ©cutÃ©es uniquement cÃ´tÃ© serveur.
-//  Aucune logique mÃ©tier ni clÃ© Supabase n'est exposÃ©e au client.
-// âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
+// Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂ
+//  Server Actions WALLET Ã¢ÂÂ exÃÂ©cutÃÂ©es uniquement cÃÂ´tÃÂ© serveur.
+//  Aucune logique mÃÂ©tier ni clÃÂ© Supabase n'est exposÃÂ©e au client.
+// Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂ
 import { revalidatePath } from 'next/cache'
 import { supabaseAdmin } from '@/lib/supabase'
 import { getServerSession } from '@/lib/supabase-server'
@@ -10,7 +10,7 @@ import { generateOTP } from '@/lib/utils'
 
 export async function depositAction(formData: FormData) {
   const session = await getServerSession()
-  if (!session) return { error: 'Non autorisÃ©' }
+  if (!session) return { error: 'Non autorisÃÂ©' }
 
   const amount = parseFloat(formData.get('amount') as string)
   const source = formData.get('source') as string
@@ -38,10 +38,14 @@ export async function depositAction(formData: FormData) {
     currency:     'USD',
     status:       'COMPLETED',
     source:       source === 'learning' ? 'Site de formation' : 'Virement bancaire',
-    description:  `DÃ©pÃ´t depuis ${source === 'learning' ? 'le site de formation' : 'virement bancaire'}`,
+    description:  `DÃÂ©pÃÂ´t depuis ${source === 'learning' ? 'le site de formation' : 'virement bancaire'}`,
     completed_at: new Date().toISOString(),
     destination:  null,
     reference:  null,
+    adjust_type:  null,
+    admin_note:   null,
+    admin_id:     null,
+    reason:       null,
   })
 
   revalidatePath('/wallet')
@@ -50,7 +54,7 @@ export async function depositAction(formData: FormData) {
 
 export async function requestWithdrawOtpAction() {
   const session = await getServerSession()
-  if (!session) return { error: 'Non autorisÃ©' }
+  if (!session) return { error: 'Non autorisÃÂ©' }
 
   const code      = generateOTP()
   const expiresAt = new Date(Date.now() + 10 * 60 * 1000).toISOString()
@@ -64,7 +68,7 @@ export async function requestWithdrawOtpAction() {
 
 export async function withdrawAction(formData: FormData) {
   const session = await getServerSession()
-  if (!session) return { error: 'Non autorisÃ©' }
+  if (!session) return { error: 'Non autorisÃÂ©' }
 
   const amount      = parseFloat(formData.get('amount') as string)
   const destination = formData.get('destination') as string
@@ -73,13 +77,13 @@ export async function withdrawAction(formData: FormData) {
   if (!amount || amount < 20) return { error: 'Minimum 20 USD' }
   if (!otpCode) return { error: 'Code OTP requis' }
 
-  // VÃ©rifier OTP cÃ´tÃ© serveur uniquement
+  // VÃÂ©rifier OTP cÃÂ´tÃÂ© serveur uniquement
   const { data: otp } = await supabaseAdmin
     .from('otp_codes').select('*')
     .eq('user_id', session.user.id).eq('code', otpCode)
     .eq('used', false).gt('expires_at', new Date().toISOString()).single()
 
-  if (!otp) return { error: 'Code OTP invalide ou expirÃ©' }
+  if (!otp) return { error: 'Code OTP invalide ou expirÃÂ©' }
   await supabaseAdmin.from('otp_codes').update({ used: true }).eq('id', otp.id)
 
   const { data: wallet } = await supabaseAdmin
@@ -105,6 +109,10 @@ export async function withdrawAction(formData: FormData) {
     completed_at: isInstant ? new Date().toISOString() : null,
     source:  null,
     reference:  null,
+    adjust_type:  null,
+    admin_note:   null,
+    admin_id:     null,
+    reason:       null,
   })
 
   revalidatePath('/wallet')
