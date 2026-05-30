@@ -1,14 +1,14 @@
 'use server'
-// âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
-//  Server Actions ADMIN â aucune clÃ© secrÃ¨te exposÃ©e au client.
-// âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
+// Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂ
+//  Server Actions ADMIN Ã¢ÂÂ aucune clÃÂ© secrÃÂ¨te exposÃÂ©e au client.
+// Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂ
 import { revalidatePath } from 'next/cache'
 import { supabaseAdmin } from '@/lib/supabase'
 import { requireAdmin } from '@/lib/admin-guard'
 
 export async function adjustBalanceAction(formData: FormData) {
   const admin = await requireAdmin()
-  if (!admin) return { error: 'AccÃ¨s refusÃ©' }
+  if (!admin) return { error: 'AccÃÂ¨s refusÃÂ©' }
 
   const userId = formData.get('userId') as string
   const type   = formData.get('type') as 'credit' | 'debit'
@@ -16,9 +16,9 @@ export async function adjustBalanceAction(formData: FormData) {
   const reason = formData.get('reason') as string
   const note   = formData.get('note') as string
 
-  if (!userId || !['credit','debit'].includes(type)) return { error: 'ParamÃ¨tres invalides' }
+  if (!userId || !['credit','debit'].includes(type)) return { error: 'ParamÃÂ¨tres invalides' }
   if (!amount || amount <= 0) return { error: 'Montant invalide' }
-  if (!note || note.trim().length < 10) return { error: 'Note interne requise (min 10 caractÃ¨res)' }
+  if (!note || note.trim().length < 10) return { error: 'Note interne requise (min 10 caractÃÂ¨res)' }
 
   const delta = type === 'credit' ? amount : -amount
 
@@ -27,7 +27,7 @@ export async function adjustBalanceAction(formData: FormData) {
   if (!wallet) return { error: 'Wallet introuvable' }
 
   if (type === 'debit' && amount > wallet.balance)
-    return { error: 'Solde insuffisant pour ce dÃ©bit' }
+    return { error: 'Solde insuffisant pour ce dÃÂ©bit' }
 
   const prevBalance = wallet.balance
   const newBalance  = prevBalance + delta
@@ -47,19 +47,20 @@ export async function adjustBalanceAction(formData: FormData) {
     reason,
     admin_note:   note,
     admin_id:     admin.user.id,
-    description:  `Ajustement admin â ${reason}`,
+    description:  `Ajustement admin Ã¢ÂÂ ${reason}`,
     completed_at: new Date().toISOString(),
     source:      null,
     destination: null,
     reference:   null,
   })
 
-  // Audit log â immuable
+  // Audit log Ã¢ÂÂ immuable
   await supabaseAdmin.from('audit_logs').insert({
     admin_id:  admin.user.id,
     target_id: userId,
     action:    `wallet.adjust.${type}`,
     details:   { amount, reason, note, previousBalance: prevBalance, newBalance },
+    ip:     null,
   })
 
   revalidatePath('/admin')
@@ -68,7 +69,7 @@ export async function adjustBalanceAction(formData: FormData) {
 
 export async function updateKycAction(userId: string, action: 'approve' | 'reject', reason?: string) {
   const admin = await requireAdmin()
-  if (!admin) return { error: 'AccÃ¨s refusÃ©' }
+  if (!admin) return { error: 'AccÃÂ¨s refusÃÂ©' }
   if (action === 'reject' && !reason) return { error: 'Motif de rejet requis' }
 
   const kycStatus = action === 'approve' ? 'VERIFIED' : 'REJECTED'
@@ -80,6 +81,7 @@ export async function updateKycAction(userId: string, action: 'approve' | 'rejec
   await supabaseAdmin.from('audit_logs').insert({
     admin_id: admin.user.id, target_id: userId,
     action: `kyc.${action}`, details: { reason },
+    ip:     null,
   })
 
   revalidatePath('/admin')
@@ -88,13 +90,14 @@ export async function updateKycAction(userId: string, action: 'approve' | 'rejec
 
 export async function updateUserStatusAction(userId: string, status: string, reason?: string) {
   const admin = await requireAdmin()
-  if (!admin) return { error: 'AccÃ¨s refusÃ©' }
+  if (!admin) return { error: 'AccÃÂ¨s refusÃÂ©' }
   if (!['ACTIVE','LOCKED','SUSPENDED'].includes(status)) return { error: 'Statut invalide' }
 
   await supabaseAdmin.from('profiles').update({ status }).eq('id', userId)
   await supabaseAdmin.from('audit_logs').insert({
     admin_id: admin.user.id, target_id: userId,
     action: `user.status.${status.toLowerCase()}`, details: { reason },
+    ip:     null,
   })
 
   revalidatePath('/admin')
@@ -103,7 +106,7 @@ export async function updateUserStatusAction(userId: string, status: string, rea
 
 export async function processWithdrawalAction(txId: string, action: 'approve' | 'reject', note?: string) {
   const admin = await requireAdmin()
-  if (!admin) return { error: 'AccÃ¨s refusÃ©' }
+  if (!admin) return { error: 'AccÃÂ¨s refusÃÂ©' }
 
   const { data: tx } = await supabaseAdmin.from('transactions').select('*').eq('id', txId).single()
   if (!tx) return { error: 'Transaction introuvable' }
@@ -120,6 +123,7 @@ export async function processWithdrawalAction(txId: string, action: 'approve' | 
   await supabaseAdmin.from('audit_logs').insert({
     admin_id: admin.user.id, target_id: tx.user_id,
     action: `withdrawal.${action}`, details: { note, amount: tx.amount },
+    ip:     null,
   })
 
   revalidatePath('/admin')
