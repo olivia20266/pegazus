@@ -4,13 +4,13 @@ import { getServerSession } from '@/lib/supabase-server'
 
 export async function POST(req: NextRequest) {
   const session = await getServerSession()
-  if (!session) return NextResponse.json({ error: 'Non autorisÃ©' }, { status: 401 })
+  if (!session) return NextResponse.json({ error: 'Non autorisÃÂ©' }, { status: 401 })
 
   const { amount, destination, otpCode } = await req.json()
   const amt = parseFloat(amount)
   if (!amt || amt < 20) return NextResponse.json({ error: 'Minimum 20 USD' }, { status: 400 })
 
-  // VÃ©rifier OTP
+  // VÃÂ©rifier OTP
   const { data: otp } = await supabaseAdmin.from('otp_codes')
     .select('*').eq('user_id', session.user.id).eq('code', otpCode)
     .eq('used', false).gt('expires_at', new Date().toISOString()).single()
@@ -43,6 +43,10 @@ export async function POST(req: NextRequest) {
     completed_at: isInstant ? new Date().toISOString() : null,
     source:  null,
     reference:  null,
+    adjust_type:   null,
+    admin_note:    null,
+    admin_id:      null,
+    reason:        null,
   }).select().single()
 
   return NextResponse.json({ wallet: updated, transaction: tx })
