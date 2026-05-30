@@ -419,11 +419,8 @@ export default function TradingClient({ user, wallet: initWallet }: { user:any; 
 
         {/* Indicateurs */}
         <div style={{ display:'flex', gap:4, marginLeft:4 }}>
-          {[['EMA','#d4a843',showEMA,setShowEMA],['RSI','#f0b43c',showRSI,setShowRSI]].map(([lbl,col,on,set])=>(
-            <button key={lbl as string} onClick={()=>(set as any)(!on)} style={{ padding:'4px 9px',borderRadius:6,border:`1px solid ${on?col:'rgba(255,255,255,.07)'}`,background:on?`rgba(${col==='#d4a843'?'212,168,67':'240,180,60'},.1)`:'transparent',color:on?col as string:'#5a677d',fontSize:11,cursor:'pointer' }}>
-              {lbl}
-            </button>
-          ))}
+          <button onClick={()=>setShowEMA(!showEMA)} style={{ padding:'4px 9px',borderRadius:6,border:`1px solid ${showEMA?'#d4a843':'rgba(255,255,255,.07)'}`,background:showEMA?'rgba(212,168,67,.1)':'transparent',color:showEMA?'#d4a843':'#5a677d',fontSize:11,cursor:'pointer' }}>EMA</button>
+          <button onClick={()=>setShowRSI(!showRSI)} style={{ padding:'4px 9px',borderRadius:6,border:`1px solid ${showRSI?'#f0b43c':'rgba(255,255,255,.07)'}`,background:showRSI?'rgba(240,180,60,.1)':'transparent',color:showRSI?'#f0b43c':'#5a677d',fontSize:11,cursor:'pointer' }}>RSI</button>
         </div>
 
         {/* Statut */}
