@@ -1,8 +1,8 @@
 'use server'
-// ─────────────────────────────────────────────────────────────────
-//  Server Actions AUTH — tout s'exécute côté serveur uniquement.
-//  Le code de ce fichier n'est JAMAIS envoyé au navigateur.
-// ─────────────────────────────────────────────────────────────────
+// âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
+//  Server Actions AUTH â tout s'exÃ©cute cÃ´tÃ© serveur uniquement.
+//  Le code de ce fichier n'est JAMAIS envoyÃ© au navigateur.
+// âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
 import { redirect } from 'next/navigation'
 import { z } from 'zod'
 import { supabaseAdmin } from '@/lib/supabase'
@@ -27,7 +27,7 @@ const registerSchema = z.object({
 export async function registerAction(formData: FormData) {
   const raw = Object.fromEntries(formData.entries())
   const parsed = registerSchema.safeParse(raw)
-  if (!parsed.success) return { error: 'Données invalides' }
+  if (!parsed.success) return { error: 'DonnÃ©es invalides' }
 
   const data      = parsed.data
   const mt5       = generateMT5Login()
@@ -36,7 +36,7 @@ export async function registerAction(formData: FormData) {
   const { data: authData, error: authErr } = await supabaseAdmin.auth.admin.createUser({
     email: data.email, password: data.password, email_confirm: true,
   })
-  if (authErr || !authData.user) return { error: authErr?.message || 'Erreur création compte' }
+  if (authErr || !authData.user) return { error: authErr?.message || 'Erreur crÃ©ation compte' }
 
   const uid = authData.user.id
 
@@ -50,13 +50,16 @@ export async function registerAction(formData: FormData) {
   })
   if (profileErr) {
     await supabaseAdmin.auth.admin.deleteUser(uid)
-    return { error: 'Erreur création profil' }
+    return { error: 'Erreur crÃ©ation profil' }
   }
 
   await supabaseAdmin.from('wallets').insert({
     user_id: uid, balance: 0, equity: 0, margin: 0,
     free_margin: 0, floating_pl: 0, learning_balance: learnBal,
     currency: 'USD', mt5_login: mt5, mt5_server: 'Pegazus-Live01',
+    source:  null,
+    destination:  null,
+    reference:  null,
   })
 
   // Connecter automatiquement
@@ -72,18 +75,18 @@ export async function loginAction(_prevState: unknown, formData: FormData) {
 
   if (!email || !password) return { error: 'Champs requis' }
 
-  // Vérifier statut compte avant auth
+  // VÃ©rifier statut compte avant auth
   const { data: authUser } = await supabaseAdmin.auth.admin.getUserByEmail(email)
   if (authUser?.user) {
     const { data: profile } = await supabaseAdmin
       .from('profiles').select('status').eq('id', authUser.user.id).single()
-    if (profile?.status === 'LOCKED') return { error: 'Compte verrouillé. Contactez le support.' }
+    if (profile?.status === 'LOCKED') return { error: 'Compte verrouillÃ©. Contactez le support.' }
   }
 
   const sb = createServerSupabase()
   const { data, error } = await sb.auth.signInWithPassword({ email, password })
   if (error || !data.user) {
-    // Incrémenter les tentatives côté serveur
+    // IncrÃ©menter les tentatives cÃ´tÃ© serveur
     if (authUser?.user) {
       const { data: p } = await supabaseAdmin.from('profiles').select('login_attempts').eq('id', authUser.user.id).single()
       const attempts = (p?.login_attempts || 0) + 1
@@ -95,13 +98,13 @@ export async function loginAction(_prevState: unknown, formData: FormData) {
 
   await supabaseAdmin.from('profiles').update({ login_attempts: 0 }).eq('id', data.user.id)
 
-  // Générer OTP
+  // GÃ©nÃ©rer OTP
   const code      = generateOTP()
   const expiresAt = new Date(Date.now() + 10 * 60 * 1000).toISOString()
   await supabaseAdmin.from('otp_codes').delete().eq('user_id', data.user.id).eq('purpose', 'login')
   await supabaseAdmin.from('otp_codes').insert({ user_id: data.user.id, code, purpose: 'login', used: false, expires_at: expiresAt })
 
-  console.log(`[OTP] ${email} → ${code}`)
+  console.log(`[OTP] ${email} â ${code}`)
 
   return {
     userId:  data.user.id,
@@ -115,7 +118,7 @@ export async function verifyOtpAction(userId: string, code: string) {
     .eq('user_id', userId).eq('code', code).eq('used', false)
     .gt('expires_at', new Date().toISOString()).single()
 
-  if (!otp) return { error: 'Code invalide ou expiré' }
+  if (!otp) return { error: 'Code invalide ou expirÃ©' }
 
   await supabaseAdmin.from('otp_codes').update({ used: true }).eq('id', otp.id)
   await supabaseAdmin.from('profiles').update({ last_login_at: new Date().toISOString() }).eq('id', userId)
