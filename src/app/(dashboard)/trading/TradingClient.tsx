@@ -1,6 +1,6 @@
 'use client'
 // Pegazus Trading Terminal
-// DonnÃÂ©es marchÃÂ© : flux interne (pas de mention source externe)
+// Données marché : flux interne (pas de mention source externe)
 import { useState, useEffect, useRef, useCallback } from 'react'
 import toast from 'react-hot-toast'
 import { fmt } from '@/lib/utils'
@@ -53,10 +53,10 @@ export default function TradingClient({ user, wallet: initWallet }: { user:any; 
   const [showEMA,   setShowEMA]   = useState(true)
   const [showRSI,   setShowRSI]   = useState(true)
 
-  // Ã¢ÂÂÃ¢ÂÂ WebSocket (Deriv cachÃÂ© Ã¢ÂÂ aucune mention dans l'UI) Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂ
+  // ── WebSocket (Deriv caché — aucune mention dans l'UI) ────────
   const connectWS = useCallback(() => {
     if (wsRef.current) wsRef.current.close()
-    // Source de donnÃÂ©es interne Pegazus
+    // Source de données interne Pegazus
     const ws = new WebSocket('wss://ws.binaryws.com/websockets/v3?app_id=1089')
     wsRef.current = ws
     ws.onopen = () => {
@@ -80,7 +80,7 @@ export default function TradingClient({ user, wallet: initWallet }: { user:any; 
         const t = msg.tick
         const newTick = { bid:+t.bid, ask:+t.ask, time:+t.epoch }
         setTick(newTick)
-        // MAJ P&L positions + vÃÂ©rif SL/TP
+        // MAJ P&L positions + vérif SL/TP
         setPositions(prev => {
           const toClose: { pos:Position; reason:'SL'|'TP' }[] = []
           const updated = prev.map(p => {
@@ -116,7 +116,7 @@ export default function TradingClient({ user, wallet: initWallet }: { user:any; 
     return () => { wsRef.current?.close(); if(robotTimer.current) clearInterval(robotTimer.current) }
   }, [connectWS])
 
-  // Ã¢ÂÂÃ¢ÂÂ Fermeture automatique SL/TP Ã¢ÂÂ notification admin Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂ
+  // ── Fermeture automatique SL/TP → notification admin ─────────
   const autoClosePosition = useCallback(async (pos: Position, reason: 'SL'|'TP') => {
     const isWin = reason === 'TP'
     const pl    = pos.pl
@@ -127,7 +127,7 @@ export default function TradingClient({ user, wallet: initWallet }: { user:any; 
       result: isWin ? 'WIN' : 'LOSS'
     }, ...prev.slice(0,49)])
 
-    // Notifier l'admin ET mettre ÃÂ  jour le solde automatiquement
+    // Notifier l'admin ET mettre à jour le solde automatiquement
     try {
       await fetch('/api/trading/close-position', {
         method: 'POST',
@@ -150,16 +150,16 @@ export default function TradingClient({ user, wallet: initWallet }: { user:any; 
       console.error('Erreur sync position')
     }
 
-    if (isWin) toast.success(`Ã¢ÂÂ TP atteint Ã¢ÂÂ Gain : ${fmt(pl)}`)
-    else       toast.error(`Ã¢ÂÂ SL atteint Ã¢ÂÂ Perte : ${fmt(pl)}`)
+    if (isWin) toast.success(`✅ TP atteint — Gain : ${fmt(pl)}`)
+    else       toast.error(`❌ SL atteint — Perte : ${fmt(pl)}`)
 
     addLog(reason === 'TP'
-      ? `Ã¢ÂÂ TP atteint ${pos.type} ${SYMBOLS.find(s=>s.id===pos.symbol)?.display} +${fmt(pl)}`
-      : `Ã¢ÂÂ SL atteint ${pos.type} ${SYMBOLS.find(s=>s.id===pos.symbol)?.display} ${fmt(pl)}`
+      ? `✅ TP atteint ${pos.type} ${SYMBOLS.find(s=>s.id===pos.symbol)?.display} +${fmt(pl)}`
+      : `❌ SL atteint ${pos.type} ${SYMBOLS.find(s=>s.id===pos.symbol)?.display} ${fmt(pl)}`
     )
   }, [])
 
-  // Ã¢ÂÂÃ¢ÂÂ Fermeture manuelle Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂ
+  // ── Fermeture manuelle ────────────────────────────────────────
   const closePosition = useCallback(async (id: string) => {
     setPositions(prev => {
       const pos = prev.find(p => p.id === id)
@@ -169,7 +169,7 @@ export default function TradingClient({ user, wallet: initWallet }: { user:any; 
     })
   }, [autoClosePosition])
 
-  // Ã¢ÂÂÃ¢ÂÂ EMA Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂ
+  // ── EMA ───────────────────────────────────────────────────────
   function calcEMA(data:number[], period:number): number[] {
     if (data.length < period) return []
     const k = 2/(period+1)
@@ -193,7 +193,7 @@ export default function TradingClient({ user, wallet: initWallet }: { user:any; 
     return rsi
   }
 
-  // Ã¢ÂÂÃ¢ÂÂ Canvas Chart Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂ
+  // ── Canvas Chart ──────────────────────────────────────────────
   useEffect(() => {
     const canvas = canvasRef.current
     if (!canvas || candles.length < 2) return
@@ -257,7 +257,7 @@ export default function TradingClient({ user, wallet: initWallet }: { user:any; 
         a.forEach((v,i)=>{ const x=toX(i+off),y=toY(v); i===0?ctx.moveTo(x,y):ctx.lineTo(x,y) })
         ctx.stroke()
       })
-      // LÃÂ©gende
+      // Légende
       ctx.fillStyle='#d4a843'; ctx.font='bold 10px sans-serif'
       ctx.fillText(`EMA${emaFast}`, padL+4, padT+12)
       ctx.fillStyle='#4f8ef0'
@@ -315,9 +315,9 @@ export default function TradingClient({ user, wallet: initWallet }: { user:any; 
     }
   }, [candles, tick, showEMA, showRSI, emaFast, emaSlow, symbol, interval])
 
-  // Ã¢ÂÂÃ¢ÂÂ Placer un ordre Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂ
+  // ── Placer un ordre ───────────────────────────────────────────
   function placeOrder() {
-    if (!tick) { toast.error('MarchÃÂ© non connectÃÂ©'); return }
+    if (!tick) { toast.error('Marché non connecté'); return }
     const lotN = parseFloat(lot)
     if (!lotN||lotN<0.01||lotN>10) { toast.error('Lot entre 0.01 et 10'); return }
     const price = orderType==='BUY' ? tick.ask : tick.bid
@@ -332,18 +332,18 @@ export default function TradingClient({ user, wallet: initWallet }: { user:any; 
     setPositions(p=>[...p,pos])
     const sym = SYMBOLS.find(s=>s.id===symbol)
     toast.success(`${orderType} ${lotN} lot ${sym?.display} @ ${price.toFixed(3)}`)
-    addLog(`Ã°ÂÂÂ¥ Ordre ${orderType} ${lotN} lot ${sym?.display} @ ${price.toFixed(3)}`)
+    addLog(`📥 Ordre ${orderType} ${lotN} lot ${sym?.display} @ ${price.toFixed(3)}`)
   }
 
-  // Ã¢ÂÂÃ¢ÂÂ Robot Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂ
+  // ── Robot ─────────────────────────────────────────────────────
   function toggleRobot() {
     if (robotOn) {
       robotRef.current=false; setRobotOn(false)
       if (robotTimer.current) clearInterval(robotTimer.current)
-      addLog('Ã¢ÂÂ¹ Robot arrÃÂªtÃÂ©')
+      addLog('⏹ Robot arrêté')
     } else {
       robotRef.current=true; setRobotOn(true)
-      addLog(`Ã¢ÂÂ¶ Robot dÃÂ©marrÃÂ© Ã¢ÂÂ EMA${emaFast}/${emaSlow} + RSI7`)
+      addLog(`▶ Robot démarré — EMA${emaFast}/${emaSlow} + RSI7`)
       robotTimer.current = setInterval(() => {
         if (!robotRef.current || candlesRef.current.length<20) return
         const closes = candlesRef.current.map(c=>c.close)
@@ -354,23 +354,23 @@ export default function TradingClient({ user, wallet: initWallet }: { user:any; 
         const s0=slow[slow.length-1],s1=slow[slow.length-2]
         const rsiNow=rsi[rsi.length-1]
         const crossUp=f1<s1&&f0>s0, crossDown=f1>s1&&f0<s0
-        addLog(`Ã°ÂÂÂ EMA${emaFast}:${f0.toFixed(3)} EMA${emaSlow}:${s0.toFixed(3)} RSI:${rsiNow.toFixed(1)}`)
+        addLog(`🔍 EMA${emaFast}:${f0.toFixed(3)} EMA${emaSlow}:${s0.toFixed(3)} RSI:${rsiNow.toFixed(1)}`)
         if (crossUp&&rsiNow>50&&rsiNow<65) {
           setPositions(prev=>{
-            if (prev.filter(p=>p.type==='BUY').length>=2) { addLog('Ã¢ÂÂ Max BUY atteint'); return prev }
+            if (prev.filter(p=>p.type==='BUY').length>=2) { addLog('⛔ Max BUY atteint'); return prev }
             const price=tick?.ask||closes[closes.length-1]
             const pip=SYMBOLS.find(s=>s.id===symbol)?.pip||0.0001
             const np:Position={id:Date.now().toString(),symbol,type:'BUY',lot:0.01,openPrice:price,currentPrice:price,sl:price-15*pip,tp:price+30*pip,pl:0,pip:0,openTime:new Date().toLocaleTimeString('fr-FR')}
-            addLog(`Ã°ÂÂÂ Robot BUY 0.01 @ ${price.toFixed(3)}`)
+            addLog(`📈 Robot BUY 0.01 @ ${price.toFixed(3)}`)
             return [...prev,np]
           })
         } else if (crossDown&&rsiNow<50&&rsiNow>35) {
           setPositions(prev=>{
-            if (prev.filter(p=>p.type==='SELL').length>=2) { addLog('Ã¢ÂÂ Max SELL atteint'); return prev }
+            if (prev.filter(p=>p.type==='SELL').length>=2) { addLog('⛔ Max SELL atteint'); return prev }
             const price=tick?.bid||closes[closes.length-1]
             const pip=SYMBOLS.find(s=>s.id===symbol)?.pip||0.0001
             const np:Position={id:Date.now().toString(),symbol,type:'SELL',lot:0.01,openPrice:price,currentPrice:price,sl:price+15*pip,tp:price-30*pip,pl:0,pip:0,openTime:new Date().toLocaleTimeString('fr-FR')}
-            addLog(`Ã°ÂÂÂ Robot SELL 0.01 @ ${price.toFixed(3)}`)
+            addLog(`📉 Robot SELL 0.01 @ ${price.toFixed(3)}`)
             return [...prev,np]
           })
         }
@@ -391,7 +391,7 @@ export default function TradingClient({ user, wallet: initWallet }: { user:any; 
   return (
     <div style={{ height:'100vh', display:'flex', flexDirection:'column', background:'#06080e', fontFamily:"'DM Sans',sans-serif", overflow:'hidden' }}>
 
-      {/* Ã¢ÂÂÃ¢ÂÂ TOPBAR Ã¢ÂÂÃ¢ÂÂ */}
+      {/* ── TOPBAR ── */}
       <div style={{ display:'flex', alignItems:'center', gap:10, padding:'8px 14px', borderBottom:'1px solid rgba(255,255,255,.07)', background:'#0c0f1a', flexShrink:0, flexWrap:'wrap' }}>
         {/* Brand */}
         <div style={{ display:'flex', alignItems:'center', gap:8, marginRight:6, flexShrink:0 }}>
@@ -431,18 +431,18 @@ export default function TradingClient({ user, wallet: initWallet }: { user:any; 
 
         {/* Wallet mini */}
         <div style={{ marginLeft:'auto',display:'flex',gap:14,padding:'5px 12px',background:'rgba(255,255,255,.04)',borderRadius:8,border:'1px solid rgba(255,255,255,.06)' }}>
-          {[['Balance',fmt(wallet?.balance||0),'#edf0f7'],['ÃÂquitÃÂ©',fmt(equity),equity>=(wallet?.balance||0)?'#2dd4a0':'#f0544f'],['P&L',`${totalPL>=0?'+':''}${fmt(totalPL)}`,totalPL>=0?'#2dd4a0':'#f0544f']].map(([l,v,c])=>(
+          {[['Balance',fmt(wallet?.balance||0),'#edf0f7'],['Équité',fmt(equity),equity>=(wallet?.balance||0)?'#2dd4a0':'#f0544f'],['P&L',`${totalPL>=0?'+':''}${fmt(totalPL)}`,totalPL>=0?'#2dd4a0':'#f0544f']].map(([l,v,c])=>(
             <div key={l}><div style={{ fontSize:9,color:'#5a677d',textTransform:'uppercase',letterSpacing:'.05em' }}>{l}</div><div style={{ fontFamily:"'DM Mono',monospace",fontSize:12,color:c as string,fontWeight:600 }}>{v}</div></div>
           ))}
         </div>
 
         <div style={{ display:'flex',gap:6 }}>
-          <a href="/wallet" style={{ fontSize:11,color:'#5a677d',textDecoration:'none',padding:'4px 9px',border:'1px solid rgba(255,255,255,.07)',borderRadius:6 }}>Ã¢ÂÂ Wallet</a>
+          <a href="/wallet" style={{ fontSize:11,color:'#5a677d',textDecoration:'none',padding:'4px 9px',border:'1px solid rgba(255,255,255,.07)',borderRadius:6 }}>← Wallet</a>
           {(user.role==='ADMIN'||user.role==='SUPERADMIN')&&<a href="/admin" style={{ fontSize:11,color:'#d4a843',textDecoration:'none',padding:'4px 9px',border:'1px solid rgba(212,168,67,.3)',borderRadius:6 }}>Admin</a>}
         </div>
       </div>
 
-      {/* Ã¢ÂÂÃ¢ÂÂ BODY Ã¢ÂÂÃ¢ÂÂ */}
+      {/* ── BODY ── */}
       <div style={{ flex:1, display:'grid', gridTemplateColumns:'1fr 280px', overflow:'hidden' }}>
 
         {/* Colonne gauche */}
@@ -455,11 +455,11 @@ export default function TradingClient({ user, wallet: initWallet }: { user:any; 
               <div style={{ display:'flex',gap:12,fontSize:12 }}>
                 <span style={{ color:'#2dd4a0' }}>Achat: <b>{tick.ask.toFixed(dp)}</b></span>
                 <span style={{ color:'#f0544f' }}>Vente: <b>{tick.bid.toFixed(dp)}</b></span>
-                <span style={{ color:'#5a677d' }}>ÃÂcart: <b style={{ color:'#f0b43c' }}>{((tick.ask-tick.bid)/(SYMBOLS.find(s=>s.id===symbol)?.pip||0.0001)).toFixed(1)} pts</b></span>
+                <span style={{ color:'#5a677d' }}>Écart: <b style={{ color:'#f0b43c' }}>{((tick.ask-tick.bid)/(SYMBOLS.find(s=>s.id===symbol)?.pip||0.0001)).toFixed(1)} pts</b></span>
               </div>
               {/* Tabs */}
               <div style={{ marginLeft:'auto',display:'flex',gap:4 }}>
-                {[['chart','Ã°ÂÂÂ Graphique'],['robot',`Ã°ÂÂ¤Â Robot${robotOn?' Ã¢ÂÂ':''}`],['history','Ã°ÂÂÂ Historique']].map(([t,l])=>(
+                {[['chart','📈 Graphique'],['robot',`🤖 Robot${robotOn?' ●':''}`],['history','📋 Historique']].map(([t,l])=>(
                   <button key={t} onClick={()=>setTab(t as any)} style={{ padding:'4px 11px',borderRadius:6,border:`1px solid ${tab===t?'#d4a843':'rgba(255,255,255,.07)'}`,background:tab===t?'rgba(212,168,67,.1)':'transparent',color:tab===t?'#d4a843':'#5a677d',fontSize:11,fontWeight:600,cursor:'pointer' }}>{l}</button>
                 ))}
               </div>
@@ -470,7 +470,7 @@ export default function TradingClient({ user, wallet: initWallet }: { user:any; 
           {tab==='chart' && (
             <div style={{ flex:1,position:'relative',overflow:'hidden' }}>
               <canvas ref={canvasRef} style={{ width:'100%',height:'100%',display:'block' }} />
-              {!connected&&<div style={{ position:'absolute',inset:0,display:'flex',alignItems:'center',justifyContent:'center',background:'rgba(6,8,14,.8)' }}><div style={{ textAlign:'center',color:'#5a677d' }}><div style={{ fontSize:28,marginBottom:8 }}>Ã°ÂÂÂ¡</div><div style={{ fontSize:13 }}>Connexion aux marchÃÂ©s...</div></div></div>}
+              {!connected&&<div style={{ position:'absolute',inset:0,display:'flex',alignItems:'center',justifyContent:'center',background:'rgba(6,8,14,.8)' }}><div style={{ textAlign:'center',color:'#5a677d' }}><div style={{ fontSize:28,marginBottom:8 }}>📡</div><div style={{ fontSize:13 }}>Connexion aux marchés...</div></div></div>}
             </div>
           )}
 
@@ -479,20 +479,20 @@ export default function TradingClient({ user, wallet: initWallet }: { user:any; 
             <div style={{ flex:1,overflow:'auto',padding:14 }}>
               <div style={{ display:'grid',gridTemplateColumns:'1fr 1fr',gap:14,marginBottom:14 }}>
                 <div style={{ background:'#0c0f1a',border:'1px solid rgba(255,255,255,.07)',borderRadius:12,padding:18 }}>
-                  <div style={{ fontFamily:"'Syne',sans-serif",fontSize:14,fontWeight:700,marginBottom:10 }}>Ã°ÂÂ¤Â Robot Pegazus</div>
-                  <div style={{ fontSize:12,color:'#5a677d',marginBottom:14,lineHeight:1.6 }}>StratÃÂ©gie EMA{emaFast}/{emaSlow} + RSI(7). ExÃÂ©cution automatique sur signal. Lot fixe 0.01. Max 2 positions/sens.</div>
+                  <div style={{ fontFamily:"'Syne',sans-serif",fontSize:14,fontWeight:700,marginBottom:10 }}>🤖 Robot Pegazus</div>
+                  <div style={{ fontSize:12,color:'#5a677d',marginBottom:14,lineHeight:1.6 }}>Stratégie EMA{emaFast}/{emaSlow} + RSI(7). Exécution automatique sur signal. Lot fixe 0.01. Max 2 positions/sens.</div>
                   <div style={{ display:'grid',gridTemplateColumns:'1fr 1fr',gap:8,marginBottom:14 }}>
-                    {([['EMA rapide', emaFast, setEmaFast], ['EMA lente', emaSlow, setEmaSlow]] as [string, number, React.Dispatch<React.SetStateAction<number>>][]).map(([l, v, fn]) => (
-                      <div key={l as string}><div style={{ fontSize:10,color:'#5a677d',textTransform:'uppercase',letterSpacing:'.06em',marginBottom:4 }}>{l}</div><input type="number" style={sInput} value={v as number} onChange={e => fn(+e.target.value)} min={2} max={200} /></div>
+                    {[['EMA rapide',emaFast,setEmaFast],['EMA lente',emaSlow,setEmaSlow]].map(([l,v,fn])=>(
+                      <div key={l as string}><div style={{ fontSize:10,color:'#5a677d',textTransform:'uppercase',letterSpacing:'.06em',marginBottom:4 }}>{l}</div><input type="number" style={sInput} value={v as number} onChange={e=>(fn as any)(+e.target.value)} min={2} max={200} /></div>
                     ))}
                   </div>
                   <button onClick={toggleRobot} style={{ width:'100%',padding:13,borderRadius:9,border:`1px solid ${robotOn?'rgba(240,84,79,.4)':'rgba(45,212,160,.4)'}`,background:robotOn?'rgba(240,84,79,.1)':'rgba(45,212,160,.1)',color:robotOn?'#f0544f':'#2dd4a0',fontWeight:700,fontSize:14,cursor:'pointer',fontFamily:"'Syne',sans-serif" }}>
-                    {robotOn?'Ã¢ÂÂ¹ ArrÃÂªter le robot':'Ã¢ÂÂ¶ DÃÂ©marrer le robot'}
+                    {robotOn?'⏹ Arrêter le robot':'▶ Démarrer le robot'}
                   </button>
                 </div>
                 <div style={{ background:'#0c0f1a',border:'1px solid rgba(255,255,255,.07)',borderRadius:12,padding:18 }}>
-                  <div style={{ fontFamily:"'Syne',sans-serif",fontSize:14,fontWeight:700,marginBottom:12 }}>Ã°ÂÂÂ Session en cours</div>
-                  {[['Positions ouvertes',String(positions.length),'#edf0f7'],['P&L flottant',`${totalPL>=0?'+':''}${fmt(totalPL)}`,totalPL>=0?'#2dd4a0':'#f0544f'],['Trades fermÃÂ©s',String(closedTrades.length),'#d4a843'],['Balance',fmt(wallet?.balance||0),'#edf0f7'],['ÃÂquitÃÂ©',fmt(equity),equity>=(wallet?.balance||0)?'#2dd4a0':'#f0544f'],['Robot',robotOn?'ACTIF Ã¢ÂÂ':'ARRÃÂTÃÂ',robotOn?'#2dd4a0':'#5a677d']].map(([l,v,c])=>(
+                  <div style={{ fontFamily:"'Syne',sans-serif",fontSize:14,fontWeight:700,marginBottom:12 }}>📊 Session en cours</div>
+                  {[['Positions ouvertes',String(positions.length),'#edf0f7'],['P&L flottant',`${totalPL>=0?'+':''}${fmt(totalPL)}`,totalPL>=0?'#2dd4a0':'#f0544f'],['Trades fermés',String(closedTrades.length),'#d4a843'],['Balance',fmt(wallet?.balance||0),'#edf0f7'],['Équité',fmt(equity),equity>=(wallet?.balance||0)?'#2dd4a0':'#f0544f'],['Robot',robotOn?'ACTIF ●':'ARRÊTÉ',robotOn?'#2dd4a0':'#5a677d']].map(([l,v,c])=>(
                     <div key={l} style={{ display:'flex',justifyContent:'space-between',padding:'6px 0',borderBottom:'1px solid rgba(255,255,255,.04)',fontSize:12 }}>
                       <span style={{ color:'#5a677d' }}>{l}</span>
                       <span style={{ fontFamily:"'DM Mono',monospace",color:c as string,fontWeight:600 }}>{v}</span>
@@ -503,9 +503,9 @@ export default function TradingClient({ user, wallet: initWallet }: { user:any; 
               <div style={{ background:'#0c0f1a',border:'1px solid rgba(255,255,255,.07)',borderRadius:12,overflow:'hidden' }}>
                 <div style={{ padding:'10px 14px',borderBottom:'1px solid rgba(255,255,255,.07)',fontSize:12,fontWeight:700,fontFamily:"'Syne',sans-serif" }}>Journal du robot</div>
                 <div style={{ height:200,overflowY:'auto',padding:'6px 0',fontFamily:"'DM Mono',monospace",fontSize:11 }}>
-                  {robotLog.length===0?<div style={{ padding:'16px 14px',color:'#5a677d' }}>Robot non dÃÂ©marrÃÂ©...</div>
+                  {robotLog.length===0?<div style={{ padding:'16px 14px',color:'#5a677d' }}>Robot non démarré...</div>
                   :robotLog.map((l,i)=>(
-                    <div key={i} style={{ padding:'2px 14px',color:l.includes('BUY')||l.includes('Ã¢ÂÂ')?'#2dd4a0':l.includes('SELL')||l.includes('Ã¢ÂÂ')||l.includes('Ã¢ÂÂ')?'#f0544f':l.includes('Ã¢ÂÂ¶')||l.includes('Signal')?'#d4a843':'#5a677d' }}>{l}</div>
+                    <div key={i} style={{ padding:'2px 14px',color:l.includes('BUY')||l.includes('✅')?'#2dd4a0':l.includes('SELL')||l.includes('❌')||l.includes('⛔')?'#f0544f':l.includes('▶')||l.includes('Signal')?'#d4a843':'#5a677d' }}>{l}</div>
                   ))}
                 </div>
               </div>
@@ -517,14 +517,14 @@ export default function TradingClient({ user, wallet: initWallet }: { user:any; 
             <div style={{ flex:1,overflow:'auto',padding:14 }}>
               <div style={{ background:'#0c0f1a',border:'1px solid rgba(255,255,255,.07)',borderRadius:12,overflow:'hidden' }}>
                 <div style={{ padding:'12px 16px',borderBottom:'1px solid rgba(255,255,255,.07)',fontFamily:"'Syne',sans-serif",fontSize:14,fontWeight:700,display:'flex',justifyContent:'space-between',alignItems:'center' }}>
-                  <span>Ã°ÂÂÂ Trades fermÃÂ©s ({closedTrades.length})</span>
+                  <span>📋 Trades fermés ({closedTrades.length})</span>
                   {closedTrades.length>0&&<span style={{ fontFamily:"'DM Mono',monospace",fontSize:13,color:closedTrades.reduce((s,t)=>s+t.closePL,0)>=0?'#2dd4a0':'#f0544f' }}>
                     Total : {closedTrades.reduce((s,t)=>s+t.closePL,0)>=0?'+':''}{fmt(closedTrades.reduce((s,t)=>s+t.closePL,0))}
                   </span>}
                 </div>
-                {closedTrades.length===0?<div style={{ padding:32,textAlign:'center',color:'#5a677d',fontSize:13 }}>Aucun trade fermÃÂ© dans cette session</div>
+                {closedTrades.length===0?<div style={{ padding:32,textAlign:'center',color:'#5a677d',fontSize:13 }}>Aucun trade fermé dans cette session</div>
                 :<table style={{ width:'100%',borderCollapse:'collapse',fontSize:12 }}>
-                  <thead><tr style={{ background:'rgba(255,255,255,.02)' }}>{['Symbole','Type','Lot','Ouverture','ClÃÂ´ture','RÃÂ©sultat','P&L','Heure'].map(h=><th key={h} style={{ padding:'8px 12px',textAlign:'left',color:'#5a677d',fontSize:10,fontWeight:600,textTransform:'uppercase',letterSpacing:'.06em' }}>{h}</th>)}</tr></thead>
+                  <thead><tr style={{ background:'rgba(255,255,255,.02)' }}>{['Symbole','Type','Lot','Ouverture','Clôture','Résultat','P&L','Heure'].map(h=><th key={h} style={{ padding:'8px 12px',textAlign:'left',color:'#5a677d',fontSize:10,fontWeight:600,textTransform:'uppercase',letterSpacing:'.06em' }}>{h}</th>)}</tr></thead>
                   <tbody>
                     {closedTrades.map(t=>(
                       <tr key={t.id} style={{ borderTop:'1px solid rgba(255,255,255,.03)' }}>
@@ -565,7 +565,7 @@ export default function TradingClient({ user, wallet: initWallet }: { user:any; 
                     <td style={{ padding:'7px 10px',fontFamily:"'DM Mono',monospace",color:'#2dd4a0' }}>{p.tp.toFixed(dp)}</td>
                     <td style={{ padding:'7px 10px',fontFamily:"'DM Mono',monospace",color:p.pip>=0?'#2dd4a0':'#f0544f' }}>{p.pip>=0?'+':''}{p.pip}</td>
                     <td style={{ padding:'7px 10px',fontFamily:"'DM Mono',monospace",fontWeight:700,color:p.pl>=0?'#2dd4a0':'#f0544f' }}>{p.pl>=0?'+':''}{fmt(p.pl)}</td>
-                    <td style={{ padding:'7px 10px' }}><button onClick={()=>closePosition(p.id)} style={{ padding:'2px 8px',background:'rgba(240,84,79,.1)',border:'1px solid rgba(240,84,79,.3)',borderRadius:4,color:'#f0544f',fontSize:10,fontWeight:600,cursor:'pointer' }}>Ã¢ÂÂ</button></td>
+                    <td style={{ padding:'7px 10px' }}><button onClick={()=>closePosition(p.id)} style={{ padding:'2px 8px',background:'rgba(240,84,79,.1)',border:'1px solid rgba(240,84,79,.3)',borderRadius:4,color:'#f0544f',fontSize:10,fontWeight:600,cursor:'pointer' }}>✕</button></td>
                   </tr>
                 ))}
               </tbody>
@@ -573,7 +573,7 @@ export default function TradingClient({ user, wallet: initWallet }: { user:any; 
           </div>
         </div>
 
-        {/* Ã¢ÂÂÃ¢ÂÂ PANNEAU DROIT Ã¢ÂÂ ORDRE Ã¢ÂÂÃ¢ÂÂ */}
+        {/* ── PANNEAU DROIT — ORDRE ── */}
         <div style={{ borderLeft:'1px solid rgba(255,255,255,.07)',background:'#0c0f1a',display:'flex',flexDirection:'column',overflow:'auto' }}>
           {/* Prix live */}
           {tick&&(
@@ -599,7 +599,7 @@ export default function TradingClient({ user, wallet: initWallet }: { user:any; 
             <div style={{ display:'grid',gridTemplateColumns:'1fr 1fr',gap:8,marginBottom:14 }}>
               {(['BUY','SELL'] as const).map(t=>(
                 <button key={t} onClick={()=>setOrderType(t)} style={{ padding:'10px',borderRadius:8,border:`2px solid ${orderType===t?(t==='BUY'?'#2dd4a0':'#f0544f'):'rgba(255,255,255,.07)'}`,background:orderType===t?(t==='BUY'?'rgba(45,212,160,.1)':'rgba(240,84,79,.1)'):'transparent',color:orderType===t?(t==='BUY'?'#2dd4a0':'#f0544f'):'#5a677d',fontWeight:700,fontSize:13,cursor:'pointer',fontFamily:"'Syne',sans-serif" }}>
-                  {t==='BUY'?'Ã¢ÂÂ² Acheter':'Ã¢ÂÂ¼ Vendre'}
+                  {t==='BUY'?'▲ Acheter':'▼ Vendre'}
                 </button>
               ))}
             </div>
@@ -617,7 +617,7 @@ export default function TradingClient({ user, wallet: initWallet }: { user:any; 
 
             {/* SL / TP */}
             <div style={{ display:'grid',gridTemplateColumns:'1fr 1fr',gap:8,marginBottom:12 }}>
-              {([['Stop Loss (pips)',slPips,setSlPips,'#f0544f'],['Take Profit (pips)',tpPips,setTpPips,'#2dd4a0']] as [string, string, React.Dispatch<React.SetStateAction<string>>, string][]).map(([l, v, fn, c])=>(
+              {[['Stop Loss (pips)',slPips,setSlPips,'#f0544f'],['Take Profit (pips)',tpPips,setTpPips,'#2dd4a0']].map(([l,v,fn,c])=>(
                 <div key={l as string}>
                   <div style={{ fontSize:10,color:c as string,textTransform:'uppercase',letterSpacing:'.06em',marginBottom:4,fontWeight:600 }}>{l}</div>
                   <input type="number" style={{ ...sInput,borderColor:`rgba(${c==='#f0544f'?'240,84,79':'45,212,160'},.2)` }} value={v as string} onChange={e=>(fn as any)(e.target.value)} />
@@ -636,7 +636,7 @@ export default function TradingClient({ user, wallet: initWallet }: { user:any; 
             </div>
 
             <button onClick={placeOrder} style={{ width:'100%',padding:14,borderRadius:9,border:'none',background:orderType==='BUY'?'#2dd4a0':'#f0544f',color:'#06080e',fontWeight:700,fontSize:14,cursor:'pointer',fontFamily:"'Syne',sans-serif",marginBottom:8 }}>
-              {orderType==='BUY'?'Ã¢ÂÂ² Acheter':'Ã¢ÂÂ¼ Vendre'} Ã¢ÂÂ {lot} lot
+              {orderType==='BUY'?'▲ Acheter':'▼ Vendre'} — {lot} lot
             </button>
 
             {tick&&<div style={{ fontSize:11,color:'#5a677d',textAlign:'center',marginBottom:16 }}>Prix : {orderType==='BUY'?tick.ask.toFixed(dp):tick.bid.toFixed(dp)}</div>}
@@ -648,7 +648,7 @@ export default function TradingClient({ user, wallet: initWallet }: { user:any; 
                 <span style={{ fontSize:12,fontWeight:600,color:robotOn?'#2dd4a0':'#5a677d',fontFamily:"'Syne',sans-serif" }}>Robot EMA{emaFast}/{emaSlow}</span>
               </div>
               <button onClick={toggleRobot} style={{ width:'100%',padding:'8px',borderRadius:8,border:`1px solid ${robotOn?'rgba(240,84,79,.3)':'rgba(45,212,160,.3)'}`,background:robotOn?'rgba(240,84,79,.08)':'rgba(45,212,160,.08)',color:robotOn?'#f0544f':'#2dd4a0',fontSize:12,fontWeight:700,cursor:'pointer',fontFamily:"'Syne',sans-serif" }}>
-                {robotOn?'Ã¢ÂÂ¹ ArrÃÂªter':'Ã¢ÂÂ¶ DÃÂ©marrer le robot'}
+                {robotOn?'⏹ Arrêter':'▶ Démarrer le robot'}
               </button>
             </div>
           </div>
