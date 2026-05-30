@@ -4,7 +4,7 @@ import { getServerSession } from '@/lib/supabase-server'
 
 export async function POST(req: NextRequest) {
   const session = await getServerSession()
-  if (!session) return NextResponse.json({ error: 'Non autorisé' }, { status: 401 })
+  if (!session) return NextResponse.json({ error: 'Non autorisÃ©' }, { status: 401 })
 
   const {
     positionId, symbol, type, lot,
@@ -13,7 +13,7 @@ export async function POST(req: NextRequest) {
 
   const userId = session.user.id
 
-  // 1. Récupérer le wallet actuel
+  // 1. RÃ©cupÃ©rer le wallet actuel
   const { data: wallet } = await supabaseAdmin
     .from('wallets')
     .select('*')
@@ -25,7 +25,7 @@ export async function POST(req: NextRequest) {
   const newBalance    = Math.max(0, wallet.balance + pl)
   const newLearningBal = Math.max(0, wallet.learning_balance + pl)
 
-  // 2. Mettre à jour le wallet (balance + learning_balance en même temps)
+  // 2. Mettre Ã  jour le wallet (balance + learning_balance en mÃªme temps)
   const { data: updatedWallet } = await supabaseAdmin
     .from('wallets')
     .update({
@@ -46,11 +46,13 @@ export async function POST(req: NextRequest) {
     currency:     'USD',
     status:       'COMPLETED',
     source:       symbol,
-    description:  `Trade fermé ${type} ${lot} lot — ${reason} (${isWin ? 'gain' : 'perte'})`,
+    description:  `Trade fermÃ© ${type} ${lot} lot â ${reason} (${isWin ? 'gain' : 'perte'})`,
     completed_at: new Date().toISOString(),
+    destination:  null,
+    reference:  null,
   })
 
-  // 4. Notification admin (entrée dans audit_logs pour que l'admin voie)
+  // 4. Notification admin (entrÃ©e dans audit_logs pour que l'admin voie)
   await supabaseAdmin.from('audit_logs').insert({
     admin_id:  userId,   // On utilise userId comme placeholder (sera vu par admin)
     target_id: userId,
@@ -61,6 +63,7 @@ export async function POST(req: NextRequest) {
       previousBalance: wallet.balance,
       newBalance,
       newLearningBalance: newLearningBal,
+    ip:     null,
     },
   })
 
@@ -88,7 +91,7 @@ export async function POST(req: NextRequest) {
     )
     if (!vertexRes.ok) console.error('[Vertex] Sync failed:', await vertexRes.text())
   } catch (err) {
-    // Ne pas bloquer si vertex est indisponible — on logue seulement
+    // Ne pas bloquer si vertex est indisponible â on logue seulement
     console.error('[Vertex] Unreachable:', err)
   }
 
